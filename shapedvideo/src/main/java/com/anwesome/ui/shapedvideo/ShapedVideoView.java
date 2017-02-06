@@ -64,7 +64,7 @@ public class ShapedVideoView extends SurfaceView implements SurfaceHolder.Callba
     public void dispatchDraw(Canvas canvas) {
         int w = canvas.getWidth(),h = canvas.getHeight();
         Path path = new Path();
-        path = definePath(new Path(),w,h);
+        path = definePath(path,w,h);
         if(path!=null) {
             canvas.clipPath(path);
         }
