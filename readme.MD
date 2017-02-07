@@ -33,5 +33,5 @@
 ```
     ShapedVideoView newVideoView  = (ShapedVideoView) findViewById(R.id.video_view);
     newVideoView.setVideoURI(uri);
-    newVideoView.start()
+    newVideoView.start();
 ```
