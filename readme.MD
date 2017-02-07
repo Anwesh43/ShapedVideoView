@@ -14,11 +14,24 @@
     android:layout_height="match_parent"
     android:id="@+id/video_view"/>
 ```
+##EllipseShapedVideoView - Render your videos in a elliptical frame
 
-####In Activity file
+###Usage
+
+#### In layout.xml file. Add the view
 
 ```
-    CircularShapedVideoView newVideoView  = (CircularShapedVideoView) findViewById(R.id.video_view);
+<com.anwesome.ui.shapedvideo.EllipseShapedVideoView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/video_view"/>
+```
+
+##Using any ShapedVideoView in android activity.
+###In Activity
+
+```
+    ShapedVideoView newVideoView  = (ShapedVideoView) findViewById(R.id.video_view);
     newVideoView.setVideoURI(uri);
     newVideoView.start()
 ```
