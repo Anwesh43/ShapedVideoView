@@ -26,6 +26,18 @@
     android:layout_height="match_parent"
     android:id="@+id/video_view"/>
 ```
+##TriangleShapedVideoView - Render your videos in a triangular frame
+
+###Usage
+
+#### In layout.xml file. Add the view
+
+```
+<com.anwesome.ui.shapedvideo.TriangleShapedVideoView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/video_view"/>
+```
 
 ##Using any ShapedVideoView in android activity.
 ###In Activity
