@@ -3,9 +3,6 @@ package com.anwesome.ui.shapedvideo;
 import android.content.Context;
 import android.graphics.*;
 import android.util.AttributeSet;
-import android.view.SurfaceHolder;
-
-
 /**
  * Created by anweshmishra on 06/02/17.
  */
