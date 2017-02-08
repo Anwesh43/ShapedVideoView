@@ -38,6 +38,18 @@
     android:layout_height="match_parent"
     android:id="@+id/video_view"/>
 ```
+##DumbleShapedVideoView - Render your videos in a dumble shaped frame
+
+###Usage
+
+#### In layout.xml file. Add the view
+
+```
+<com.anwesome.ui.shapedvideo.DumbleShapedVideoView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/video_view"/>
+```
 
 ##Using any ShapedVideoView in android activity.
 ###In Activity
