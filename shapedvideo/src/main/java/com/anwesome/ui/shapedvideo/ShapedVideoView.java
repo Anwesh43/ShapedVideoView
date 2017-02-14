@@ -70,4 +70,7 @@ public class ShapedVideoView extends SurfaceView implements SurfaceHolder.Callba
         }
         super.dispatchDraw(canvas);
     }
+    public void pause() {
+        mediaPlayer.stop();
+    }
 }

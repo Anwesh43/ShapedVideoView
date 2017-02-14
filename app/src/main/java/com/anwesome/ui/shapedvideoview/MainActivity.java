@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
+            newVideoView.pause();
 
         }
     }
@@ -109,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 isRunning = true;
                 imageThread.start();
             }
+            newVideoView.start();
         }
     }
     public void onActivityResult(int request_code,int result_code,Intent data) {
