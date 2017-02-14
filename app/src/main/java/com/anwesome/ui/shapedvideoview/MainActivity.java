@@ -87,9 +87,29 @@ public class MainActivity extends AppCompatActivity {
     }
     public void onPause() {
         super.onPause();
+        if(started) {
+            if(isRunning) {
+                isRunning = false;
+                while (true) {
+                    try {
+                        imageThread.join();
+                        break;
+                    } catch (Exception ex) {
+
+                    }
+                }
+            }
+
+        }
     }
     public void onResume() {
         super.onResume();
+        if(started) {
+            if(!isRunning) {
+                isRunning = true;
+                imageThread.start();
+            }
+        }
     }
     public void onActivityResult(int request_code,int result_code,Intent data) {
         if(request_code == this.request_code && result_code == Activity.RESULT_OK) {
