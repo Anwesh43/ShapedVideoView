@@ -19,6 +19,7 @@ public class ShapedVideoView extends SurfaceView implements SurfaceHolder.Callba
     public ShapedVideoView(Context context, AttributeSet attributeSet) {
         super(context,attributeSet);
         this.context = context;
+        setDrawingCacheEnabled(true);
         this.mediaPlayer = new MediaPlayer();
         holder = getHolder();
         holder.addCallback(this);
@@ -27,6 +28,7 @@ public class ShapedVideoView extends SurfaceView implements SurfaceHolder.Callba
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         if(this.mediaPlayer!=null) {
             mediaPlayer.setDisplay(holder);
+            setDrawingCacheEnabled(true);
         }
     }
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
@@ -47,7 +49,6 @@ public class ShapedVideoView extends SurfaceView implements SurfaceHolder.Callba
     }
     public void start() {
         if(loaded) {
-            mediaPlayer.setLooping(true);
             mediaPlayer.start();
 
         }
@@ -57,6 +58,7 @@ public class ShapedVideoView extends SurfaceView implements SurfaceHolder.Callba
         this.context = context;
         getHolder().addCallback(this);
         mediaPlayer = new MediaPlayer();
+
     }
     protected Path definePath(Path path,int w,int h){
         return null;
@@ -72,5 +74,8 @@ public class ShapedVideoView extends SurfaceView implements SurfaceHolder.Callba
     }
     public void pause() {
         mediaPlayer.stop();
+    }
+    public void setOnCompletetionListener(MediaPlayer.OnCompletionListener onCompleteListener) {
+        mediaPlayer.setOnCompletionListener(onCompleteListener);
     }
 }

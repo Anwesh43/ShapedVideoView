@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 while(isRunning) {
+                    newVideoView.setDrawingCacheEnabled(true);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -88,19 +89,22 @@ public class MainActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         if(started) {
-            if(isRunning) {
-                isRunning = false;
-                while (true) {
-                    try {
-                        imageThread.join();
-                        break;
-                    } catch (Exception ex) {
+            stopThread();
+            newVideoView.pause();
+        }
+    }
+    public void stopThread() {
+        if(isRunning) {
+            isRunning = false;
+            while(true) {
+                try {
+                    imageThread.join();
+                    break;
+                }
+                catch (Exception ex) {
 
-                    }
                 }
             }
-            newVideoView.pause();
-
         }
     }
     public void onResume() {
@@ -118,11 +122,23 @@ public class MainActivity extends AppCompatActivity {
             Uri uri = data.getData();
             newVideoView.setVideoURI(uri);
             newVideoView.start();
-            newVideoView.setDrawingCacheEnabled(true);
             getImageFromVideo();
             started = true;
+            newVideoView.setOnCompletetionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    stopThread();
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(socket!=null && socket.connected()) {
+                                socket.emit("stopSavingImage");
+                            }
+                        }
+                    });
+                    thread.start();
+                }
+            });
         }
     }
-
-
 }
