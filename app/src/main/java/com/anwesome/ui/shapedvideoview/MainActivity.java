@@ -18,7 +18,7 @@ import com.anwesome.ui.shapedvideo.CircularShapedVideoView;
 import com.anwesome.ui.shapedvideo.ShapedVideoView;
 
 public class MainActivity extends AppCompatActivity {
-    private int request_code = 1,time=0;
+    private int request_code = 1;
     private String filePath = Environment.getExternalStorageDirectory()+"/abp.mp4";
     private ShapedVideoView newVideoView;
     @Override
