@@ -3,6 +3,8 @@ package com.anwesome.ui.shapedvideoview;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Movie;
 import android.graphics.drawable.shapes.Shape;
 import android.media.MediaPlayer;
@@ -11,14 +13,25 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.VideoView;
 
 import com.anwesome.ui.shapedvideo.CircularShapedVideoView;
 import com.anwesome.ui.shapedvideo.ShapedVideoView;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
+
+import java.io.ByteArrayOutputStream;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
     private int request_code = 1;
+    private Socket socket;
+    private Thread imageThread;
+    private boolean isRunning = true,started = false;
     private String filePath = Environment.getExternalStorageDirectory()+"/abp.mp4";
     private ShapedVideoView newVideoView;
     @Override
@@ -32,6 +45,45 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("android.intent.extras.CAMERA_FACING",1);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, filePath);
         startActivityForResult(intent,request_code);
+
+    }
+    public void getImageFromVideo() {
+
+        imageThread = new Thread(new Runnable(){
+            public void run() {
+                try {
+                    socket = IO.socket(AppConstants.MAIN_URL);
+                    socket = socket.connect();
+                }
+                catch (Exception ex) {
+
+                }
+                while(isRunning) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Bitmap bitmap = newVideoView.getDrawingCache();
+                            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                            if(bitmap!=null) {
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 1, byteArrayOutputStream);
+                                byte[] data = byteArrayOutputStream.toByteArray();
+                                String base64String = Base64.encodeToString(data, Base64.DEFAULT);
+                                if(socket!=null && socket.connected()) {
+                                    socket.emit("newImage",base64String);
+                                }
+                            }
+                        }
+                    });
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception ex) {
+
+                    }
+                }
+            }
+        });
+        imageThread.start();
     }
     public void onPause() {
         super.onPause();
@@ -44,7 +96,9 @@ public class MainActivity extends AppCompatActivity {
             Uri uri = data.getData();
             newVideoView.setVideoURI(uri);
             newVideoView.start();
-
+            newVideoView.setDrawingCacheEnabled(true);
+            getImageFromVideo();
+            started = true;
         }
     }
 
