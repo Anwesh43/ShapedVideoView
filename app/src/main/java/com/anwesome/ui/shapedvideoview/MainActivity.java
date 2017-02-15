@@ -24,6 +24,7 @@ import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         newVideoView  = (ShapedVideoView) findViewById(R.id.video_view);
         Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
         intent.putExtra("android.intent.extras.CAMERA_FACING",1);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, filePath);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(filePath)));
         startActivityForResult(intent,request_code);
 
     }
