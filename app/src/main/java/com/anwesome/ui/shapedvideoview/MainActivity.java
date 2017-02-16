@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private Socket socket;
     private Thread imageThread;
     private boolean isRunning = true,started = false;
-    private String filePath = Environment.getExternalStorageDirectory()+"/abp.mp4";
+    private String filePath = Environment.getExternalStorageDirectory()+"/"+Environment.DIRECTORY_MOVIES+"/abp.mp4";
     private ShapedVideoView newVideoView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
