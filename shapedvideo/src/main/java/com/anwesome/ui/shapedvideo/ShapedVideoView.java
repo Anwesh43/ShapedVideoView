@@ -49,6 +49,7 @@ public class ShapedVideoView extends SurfaceView implements SurfaceHolder.Callba
     }
     public void start() {
         if(loaded) {
+            mediaPlayer.setLooping(true);
             mediaPlayer.start();
 
         }
