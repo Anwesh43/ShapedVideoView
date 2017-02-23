@@ -78,4 +78,7 @@ public class ShapedVideoView extends SurfaceView implements SurfaceHolder.Callba
     public void setOnCompletetionListener(MediaPlayer.OnCompletionListener onCompleteListener) {
         mediaPlayer.setOnCompletionListener(onCompleteListener);
     }
+    public void setVolume(float volume) {
+        mediaPlayer.setVolume(0,volume);
+    }
 }
