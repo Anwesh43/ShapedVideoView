@@ -19,6 +19,7 @@ import android.view.WindowManager;
 import android.widget.VideoView;
 
 import com.anwesome.ui.shapedvideo.CircularShapedVideoView;
+import com.anwesome.ui.shapedvideo.DoubleCircleShapedView;
 import com.anwesome.ui.shapedvideo.ShapedVideoView;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -123,23 +124,6 @@ public class MainActivity extends AppCompatActivity {
             Uri uri = data.getData();
             newVideoView.setVideoURI(uri);
             newVideoView.start();
-            getImageFromVideo();
-            started = true;
-            newVideoView.setOnCompletetionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    stopThread();
-                    Thread thread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(socket!=null && socket.connected()) {
-                                socket.emit("stopSavingImage");
-                            }
-                        }
-                    });
-                    thread.start();
-                }
-            });
         }
     }
 }
