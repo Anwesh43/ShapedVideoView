@@ -15,11 +15,11 @@ public class ArrowShapedVideoView extends ShapedVideoView {
         super(context);
     }
     public Path definePath(Path path,int w,int h) {
-        path.moveTo(w/2,h/2);
+        path.moveTo(w/2,3*h/4);
         path.lineTo(0,h);
-        path.lineTo(w/2,h/2);
+        path.lineTo(w/2,0);
         path.lineTo(w,h);
-        path.lineTo(w/2,h/2);
+        path.lineTo(w/2,3*h/4);
         return path;
     }
 }
