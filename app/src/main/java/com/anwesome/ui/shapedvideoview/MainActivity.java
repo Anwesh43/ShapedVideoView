@@ -90,10 +90,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void onPause() {
         super.onPause();
-        if(started) {
-            stopThread();
-            newVideoView.pause();
-        }
+        newVideoView.pause();
     }
     public void stopThread() {
         if(isRunning) {
@@ -111,13 +108,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void onResume() {
         super.onResume();
-        if(started) {
-            if(!isRunning) {
-                isRunning = true;
-                imageThread.start();
-            }
-            newVideoView.start();
-        }
+        newVideoView.start();
     }
     public void onActivityResult(int request_code,int result_code,Intent data) {
         if(request_code == this.request_code && result_code == Activity.RESULT_OK) {
