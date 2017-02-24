@@ -2,6 +2,7 @@ package com.anwesome.ui.shapedvideo;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -23,7 +24,12 @@ public class ShapedVideoView extends SurfaceView implements SurfaceHolder.Callba
         this.mediaPlayer = new MediaPlayer();
         holder = getHolder();
         holder.addCallback(this);
-        //setWillNotDraw(false);
+        if(shouldDraw()) {
+            setWillNotDraw(false);
+        }
+    }
+    protected boolean shouldDraw() {
+        return false;
     }
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         if(this.mediaPlayer!=null) {
@@ -81,5 +87,22 @@ public class ShapedVideoView extends SurfaceView implements SurfaceHolder.Callba
     }
     public void setVolume(float volume) {
         mediaPlayer.setVolume(0,volume);
+    }
+    public void onDraw(Canvas canvas){
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setStyle(Paint.Style.STROKE);
+        drawElements(canvas,paint);
+    }
+    protected void drawElements(Canvas canvas, Paint paint) {
+
+    }
+    public boolean onTouchEvent(MotionEvent event) {
+        if(shouldDraw() && event.getAction() == MotionEvent.ACTION_DOWN) {
+            handleTap(event.getX(),event.getY());
+        }
+        return true;
+    }
+    protected void handleTap(float x,float y) {
+
     }
 }
