@@ -22,6 +22,8 @@ public class DrawShapesShapedVideoView extends ShapedVideoView{
         return true;
     }
     public void drawElements(Canvas canvas,Paint paint) {
+        paint.setColor(Color.parseColor("#283593"));
+        paint.setStrokeWidth(15);
         for(Shape shape:shapes) {
             shape.draw(canvas,paint);
             shape.update();
@@ -61,7 +63,7 @@ public class DrawShapesShapedVideoView extends ShapedVideoView{
         }
     }
     private class Shape {
-        private float x,y,deg=0,degSpeed = 0,size=10,time=0;
+        private float x,y,deg=0,degSpeed = 20,size=10,time=0;
         private ShapeMode shapeMode;
         private  Shape(float x,float y,ShapeMode shapeMode) {
             this.x = x;
