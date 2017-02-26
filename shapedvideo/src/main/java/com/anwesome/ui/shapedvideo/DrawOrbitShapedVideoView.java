@@ -33,6 +33,9 @@ public class DrawOrbitShapedVideoView extends ShapedVideoView {
             }
         }
         if(isAnimated) {
+            if(orbits.size() == 0) {
+                isAnimated = false;
+            }
             try {
                 Thread.sleep(50);
                 invalidate();
