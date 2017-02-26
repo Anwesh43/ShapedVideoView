@@ -14,6 +14,7 @@ import java.util.*;
  */
 public class DrawOrbitShapedVideoView extends ShapedVideoView {
     private List<Orbit> orbits = new ArrayList<>();
+    private boolean isAnimated = false;
     private OrbitFactory orbitFactory = new OrbitFactory();
     public DrawOrbitShapedVideoView(Context context, AttributeSet attrs) {
         super(context,attrs);
@@ -31,10 +32,23 @@ public class DrawOrbitShapedVideoView extends ShapedVideoView {
                 orbits.remove(orbit);
             }
         }
+        if(isAnimated) {
+            try {
+                Thread.sleep(50);
+                invalidate();
+            }
+            catch (Exception ex) {
+
+            }
+        }
     }
     public void handleTap(float x,float y) {
         Orbit orbit = orbitFactory.newInstance(x,y);
         orbits.add(orbit);
+        if(!isAnimated) {
+            isAnimated = true;
+            postInvalidate();
+        }
     }
     private class Orbit {
         private float x,y,deg = -90,speed = 30,intialDeg = -90;
