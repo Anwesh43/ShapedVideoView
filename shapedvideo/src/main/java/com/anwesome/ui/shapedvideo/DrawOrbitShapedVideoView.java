@@ -33,7 +33,8 @@ public class DrawOrbitShapedVideoView extends ShapedVideoView {
         }
     }
     public void handleTap(float x,float y) {
-        orbitFactory.newInstance(x,y);
+        Orbit orbit = orbitFactory.newInstance(x,y);
+        orbits.add(orbit);
     }
     private class Orbit {
         private float x,y,deg = -90,speed = 30,intialDeg = -90;
