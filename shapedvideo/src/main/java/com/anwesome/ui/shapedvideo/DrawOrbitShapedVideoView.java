@@ -18,7 +18,9 @@ public class DrawOrbitShapedVideoView extends ShapedVideoView {
     public DrawOrbitShapedVideoView(Context context, AttributeSet attrs) {
         super(context,attrs);
     }
-
+    protected boolean shouldDraw() {
+        return true;
+    }
     public DrawOrbitShapedVideoView(Context context) {
         super(context);
     }
