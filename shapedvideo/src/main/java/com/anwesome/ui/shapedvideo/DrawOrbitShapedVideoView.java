@@ -8,12 +8,13 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by anweshmishra on 26/02/17.
  */
 public class DrawOrbitShapedVideoView extends ShapedVideoView {
-    private List<Orbit> orbits = new ArrayList<>();
+    private ConcurrentLinkedQueue<Orbit> orbits = new ConcurrentLinkedQueue<>();
     private boolean isAnimated = false;
     private OrbitFactory orbitFactory = new OrbitFactory();
     public DrawOrbitShapedVideoView(Context context, AttributeSet attrs) {
@@ -66,9 +67,11 @@ public class DrawOrbitShapedVideoView extends ShapedVideoView {
             paint.setStrokeWidth(r/6);
             canvas.save();
             canvas.translate(x,y);
+            canvas.drawArc(new RectF(-r,-r,r,r),intialDeg,deg-intialDeg,false,paint);
+            canvas.save();
             canvas.rotate(deg);
             canvas.drawCircle(r,0,r/4,paint);
-            canvas.drawArc(new RectF(-r/2,-r/2,r/2,r/2),intialDeg,deg-intialDeg,false,paint);
+            canvas.restore();
             canvas.restore();
             deg+=speed;
             if(deg >= 270) {
