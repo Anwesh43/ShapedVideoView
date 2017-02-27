@@ -97,6 +97,7 @@ public class ColorFilterShapedVideoView extends ShapedVideoView{
             return x-w*dir;
         }
         public void draw(Canvas canvas,Paint paint) {
+            paint.setStyle(Paint.Style.FILL);
             paint.setColor(color);
             canvas.drawRect(new RectF(x,y,x+w,y+h),paint);
         }
@@ -108,7 +109,7 @@ public class ColorFilterShapedVideoView extends ShapedVideoView{
             return dir == 0;
         }
         public void move() {
-            this.x+=dir;
+            this.x+=speed*dir;
             if((dir == 1 && x>=finalX) || (dir == -1 && x<=finalX)) {
                 x = finalX;
                 dir = 0;
@@ -135,10 +136,17 @@ public class ColorFilterShapedVideoView extends ShapedVideoView{
                     if(currIndex == 0){
                         currRect = getIndex(rects.size()-1);
                     }
+                    else{
+                        currRect = getIndex(currIndex-1);
+                    }
                     if(prevRect!=null  && currRect!=null){
                         prevRect.startMoving(1,prevRect.getNextX(1));
                         currRect.setX(prevRect.getPrevX(1));
                         currRect.startMoving(1,0);
+                        currIndex-=1;
+                        if(currIndex<0) {
+                            currIndex = rects.size()-1;
+                        }
                     }
                 }
                 else if(e1.getX()>e2.getX()) {
@@ -146,11 +154,19 @@ public class ColorFilterShapedVideoView extends ShapedVideoView{
                     if(currIndex == rects.size()-1){
                         currRect = getIndex(0);
                     }
+                    else {
+                        currRect = getIndex(currIndex+1);
+                    }
                     if(prevRect!=null  && currRect!=null){
                         prevRect.startMoving(-1,prevRect.getNextX(-1));
                         currRect.setX(prevRect.getPrevX(-1));
                         currRect.startMoving(-1,0);
+                        currIndex+=1;
+                        if(currIndex>=rects.size()) {
+                            currIndex = 0;
+                        }
                     }
+
                 }
                 if(prevRect!=null && currRect!=null) {
                     isAnimated = true;
