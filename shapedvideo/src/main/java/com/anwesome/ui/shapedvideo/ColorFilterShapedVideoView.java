@@ -36,6 +36,15 @@ public class ColorFilterShapedVideoView extends ShapedVideoView{
         }
         time++;
         if(isAnimated) {
+            if(prevRect!=null && currRect!=null) {
+                prevRect.move();
+                currRect.move();
+                if(prevRect.stop() && currRect.stop()) {
+                    isAnimated = false;
+                    prevRect = null;
+                    currRect = null;
+                }
+            }
             try {
                 Thread.sleep(50);
                 invalidate();
