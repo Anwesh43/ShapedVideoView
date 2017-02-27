@@ -16,13 +16,16 @@ public class ColorFilterShapedVideoView extends ShapedVideoView{
     private boolean isAnimated = false;
     private int currIndex = 0;
     private ColorFilterRect currRect  = null,prevRect = null;
+    private GestureDetector gestureDetector;
     private ConcurrentLinkedQueue<ColorFilterRect> rects = new ConcurrentLinkedQueue<>();
     private String colorHexes[] = {"#AAF57C00","#AAE53935","#AA43A047","#AA0277BD"};
     public ColorFilterShapedVideoView(Context context) {
         super(context);
+        gestureDetector = new GestureDetector(context,new FilterGestureListener());
     }
     public ColorFilterShapedVideoView(Context context, AttributeSet attrs) {
         super(context,attrs);
+        gestureDetector = new GestureDetector(context,new FilterGestureListener());
     }
     protected boolean shouldDraw() {
         return  true;
@@ -72,7 +75,7 @@ public class ColorFilterShapedVideoView extends ShapedVideoView{
         }
     }
     public boolean onTouchEvent(MotionEvent event) {
-        return true;
+        return gestureDetector.onTouchEvent(event);
     }
     private class ColorFilterRect {
         private float x,y,finalX;
