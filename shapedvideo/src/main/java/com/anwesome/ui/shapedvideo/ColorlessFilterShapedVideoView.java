@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class ColorlessFilterShapedVideoView extends ShapedVideoView {
     private boolean isAnimated = false;
+    private ColorlessFilter current=null,previous=null;
     private ConcurrentLinkedQueue<ColorlessFilter> colorlessFilters = new ConcurrentLinkedQueue<>();
     private int currIndex = 0,time = 0;
     private int w = 200,h =200;
@@ -31,7 +32,7 @@ public class ColorlessFilterShapedVideoView extends ShapedVideoView {
         return null;
     }
     public void initColorFilters() {
-        String colorHexes[] = {"#9E9E9E","#BDBDBD","#9E9E9E","#757575","#90A4AE","#B0BEC5"};
+        String colorHexes[] = {"#9E9E9E","#212121","#37474F","#757575","#90A4AE","#B0BEC5"};
         for(String colorHex:colorHexes) {
             colorlessFilters.add(new ColorlessFilter(colorHex));
         }
@@ -46,34 +47,58 @@ public class ColorlessFilterShapedVideoView extends ShapedVideoView {
             h = canvas.getHeight();
             initColorFilters();
         }
+        for(ColorlessFilter colorlessFilter:colorlessFilters) {
+            colorlessFilter.draw(canvas,paint);
+        }
         time++;
         if(isAnimated) {
-            ColorlessFilter colorlessFilter = getColorlessFilter(currIndex);
-            if(colorlessFilter!=null) {
-                colorlessFilter.update();
-                if(colorlessFilter.isStop()) {
-                    currIndex++;
-                    currIndex%=colorlessFilters.size();
-                }
-                try {
-                    Thread.sleep(50);
-                    invalidate();
-                } catch (Exception ex) {
-
-                }
+            if(previous == null) {
+                updateCurrent();
             }
             else {
+                if(previous.isStop()) {
+                    updateCurrent();
+                }
+                else {
+                    previous.update();
+                    if(previous.isStop()) {
+                        current.startAppearing();
+                    }
+                }
+            }
+            try {
+                Thread.sleep(50);
+                invalidate();
+            } catch (Exception ex) {
+
+            }
+        }
+    }
+    private void updateCurrent() {
+        if(current!=null) {
+            current.update();
+            if(current.isStop()) {
+                previous = current;
+                current = null;
+                currIndex++;
+                currIndex%=colorlessFilters.size();
                 isAnimated = false;
             }
         }
     }
     public void handleTap(float x,float y) {
-        if(!isAnimated) {
-            ColorlessFilter colorlessFilter = getColorlessFilter(currIndex);
-            if(colorlessFilter!=null) {
-                colorlessFilter.startScalingUp();
-                postInvalidate();
+        if(!isAnimated && current == null)  {
+            current = getColorlessFilter(currIndex);
+            if(current!=null) {
+                if(previous == null) {
+                    current.startAppearing();
+                }
+                else {
+                    previous.startDisappearing();
+                }
                 isAnimated = true;
+                postInvalidate();
+
             }
         }
     }
@@ -97,7 +122,7 @@ public class ColorlessFilterShapedVideoView extends ShapedVideoView {
             deg+=degSpeed*dir;
             scale+=scaleSpeed*dir;
             if(deg>=360 && scale>=1.0f) {
-                dir = -1;
+                dir = 0;
                 scale = 1;
                 deg = 360;
             }
@@ -110,8 +135,11 @@ public class ColorlessFilterShapedVideoView extends ShapedVideoView {
         public boolean isStop() {
             return dir == 0;
         }
-        public void startScalingUp() {
+        public void startAppearing() {
             dir = 1;
+        }
+        public void startDisappearing() {
+            dir = -1;
         }
         public int hashCode() {
             return colorHex.hashCode()+(int)deg+(int)dir;
