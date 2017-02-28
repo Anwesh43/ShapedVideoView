@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Created by anweshmishra on 28/02/17.
  */
 public class ColorlessFilterShapedVideoView extends ShapedVideoView {
+    private boolean isAnimated = false;
     private ConcurrentLinkedQueue<ColorlessFilter> colorlessFilters = new ConcurrentLinkedQueue<>();
     private int currIndex = 0,time = 0;
     private int w = 200,h =200;
@@ -19,7 +20,7 @@ public class ColorlessFilterShapedVideoView extends ShapedVideoView {
     public ColorlessFilterShapedVideoView(Context context, AttributeSet attrs) {
         super(context,attrs);
     }
-    public ColorlessFilter get(int index) {
+    public ColorlessFilter getColorlessFilter(int index) {
         int i = 0;
         for(ColorlessFilter colorlessFilter:colorlessFilters) {
             if(i == index) {
@@ -46,9 +47,35 @@ public class ColorlessFilterShapedVideoView extends ShapedVideoView {
             initColorFilters();
         }
         time++;
+        if(isAnimated) {
+            ColorlessFilter colorlessFilter = getColorlessFilter(currIndex);
+            if(colorlessFilter!=null) {
+                colorlessFilter.update();
+                if(colorlessFilter.isStop()) {
+                    currIndex++;
+                    currIndex%=colorlessFilters.size();
+                }
+                try {
+                    Thread.sleep(50);
+                    invalidate();
+                } catch (Exception ex) {
+
+                }
+            }
+            else {
+                isAnimated = false;
+            }
+        }
     }
     public void handleTap(float x,float y) {
-
+        if(!isAnimated) {
+            ColorlessFilter colorlessFilter = getColorlessFilter(currIndex);
+            if(colorlessFilter!=null) {
+                colorlessFilter.startScalingUp();
+                postInvalidate();
+                isAnimated = true;
+            }
+        }
     }
     private class ColorlessFilter {
         private float deg = 0,scale = 0,degSpeed = 36,scaleSpeed = 0.1f,dir = 0;
@@ -68,9 +95,20 @@ public class ColorlessFilterShapedVideoView extends ShapedVideoView {
         }
         public void update() {
             deg+=degSpeed*dir;
+            scale+=scaleSpeed*dir;
+            if(deg>=360 && scale>=1.0f) {
+                dir = -1;
+                scale = 1;
+                deg = 360;
+            }
+            if(deg<=0 && scale<=0) {
+                dir = 0;
+                scale = 0;
+                deg = 0;
+            }
         }
-        public void startScalingDown() {
-            dir = -1;
+        public boolean isStop() {
+            return dir == 0;
         }
         public void startScalingUp() {
             dir = 1;
