@@ -10,6 +10,8 @@ import android.view.MotionEvent;
  */
 public class CircularColorFilterShapeVideoView extends ShapedVideoView{
     private boolean isAnimated = false;
+    private int time = 0;
+    private CircularColorFilter circularColorFilter = new CircularColorFilter();
     public CircularColorFilterShapeVideoView(Context context) {
         super(context);
     }
@@ -19,7 +21,11 @@ public class CircularColorFilterShapeVideoView extends ShapedVideoView{
     public boolean shouldDraw() {
         return true;
     }
-    public void onDraw(Canvas canvas) {
+    public void drawElements(Canvas canvas,Paint paint) {
+        if(time == 0) {
+            circularColorFilter.setDimensions(canvas.getWidth(),canvas.getHeight());
+        }
+        circularColorFilter.draw(canvas,paint);
         if(isAnimated) {
             try {
                 Thread.sleep(50);
@@ -31,5 +37,34 @@ public class CircularColorFilterShapeVideoView extends ShapedVideoView{
     }
     public void handleTap(float x,float y) {
 
+    }
+    private class CircularColorFilter {
+        private float x,y,r,sweep = 0,dir = 0;
+        public void setDimensions(float w,float h) {
+            x = w/2;
+            y = h/2;
+            r = w/2;
+        }
+        public void draw(Canvas canvas,Paint paint) {
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(Color.parseColor("#AAE65100"));
+            canvas.drawArc(new RectF(x-r,y-r,x+r,y+r),0,sweep,true,paint);
+        }
+        public void startMoving() {
+            dir = 1;
+        }
+        public void update() {
+            sweep+=24*dir;
+            if(sweep>=360) {
+                dir = -1;
+            }
+            if(sweep<=0) {
+                dir = 0;
+                isAnimated = false;
+            }
+        }
+        public int hashCode() {
+            return (int)(x+y+r);
+        }
     }
 }
