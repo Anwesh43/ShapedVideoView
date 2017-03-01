@@ -27,6 +27,7 @@ public class CircularColorFilterShapeVideoView extends ShapedVideoView{
         }
         circularColorFilter.draw(canvas,paint);
         if(isAnimated) {
+            circularColorFilter.update();
             try {
                 Thread.sleep(50);
                 invalidate();
@@ -36,7 +37,10 @@ public class CircularColorFilterShapeVideoView extends ShapedVideoView{
         }
     }
     public void handleTap(float x,float y) {
-
+        if(!isAnimated) {
+            circularColorFilter.startMoving();
+            isAnimated = true;
+        }
     }
     private class CircularColorFilter {
         private float x,y,r,sweep = 0,dir = 0;
