@@ -40,6 +40,7 @@ public class CircularColorFilterShapeVideoView extends ShapedVideoView{
         if(!isAnimated) {
             circularColorFilter.startMoving();
             isAnimated = true;
+            postInvalidate();
         }
     }
     private class CircularColorFilter {
