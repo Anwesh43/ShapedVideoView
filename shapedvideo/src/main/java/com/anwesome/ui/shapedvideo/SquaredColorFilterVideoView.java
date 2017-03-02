@@ -2,23 +2,60 @@ package com.anwesome.ui.shapedvideo;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.media.UnsupportedSchemeException;
 import android.util.AttributeSet;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by anweshmishra on 03/03/17.
  */
 public class SquaredColorFilterVideoView extends ShapedVideoView {
+    private boolean isAnimated = true;
+    private List<SquareColorFilter> filters = new LinkedList<>();
+    private int time = 0,index = 0;
     public SquaredColorFilterVideoView(Context context, AttributeSet attrs) {
         super(context,attrs);
     }
     protected boolean shouldDraw() {
         return true;
     }
+    private int getTransparentColor(String colorHex) {
+        return Color.parseColor("#99"+colorHex.replace("#",""));
+    }
     public void drawElements(Canvas canvas, Paint paint) {
+        if(time == 0) {
+            int w = canvas.getWidth()/4,h = canvas.getHeight()/4;
+            int colors[] = {getTransparentColor("#3F51B5"),getTransparentColor("#f44336"),getTransparentColor("#0097A7"),getTransparentColor("#D84315")};
+            int i = 0;
+            for(int color:colors) {
+                filters.add(new SquareColorFilter(color,(w/4)*i%2,(h/4)*(i/2),w/2,h/2));
+            }
+        }
+        time++;
+        if(isAnimated) {
+            if(index>=0 && index<filters.size()) {
+                filters.get(index).update();
+                if(filters.get(index).stopped()) {
+                    index++;
+                    if(index == filters.size()) {
+                        isAnimated = false;
+                        index = index-1;
+                    }
+                }
+            }
+            try {
+                Thread.sleep(50);
+                invalidate();
+            }
+            catch (Exception ex) {
 
+            }
+        }
     }
     class SquareColorFilter {
         private int color;
