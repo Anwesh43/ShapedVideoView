@@ -22,10 +22,18 @@ public class PacCreateShapedVideoView extends ShapedVideoView {
     public boolean shouldDraw() {
         return true;
     }
-    public void onDraw(Canvas canvas) {
+    public void drawElements(Canvas canvas,Paint paint) {
         if(time == 0) {
             w = canvas.getWidth();
             h = canvas.getHeight();
+        }
+        for(Pac pac:pacs) {
+            pac.draw(canvas,paint);
+            pac.update();
+            if(pac.stop) {
+                pacs.remove(pac);
+            }
+
         }
         time++;
         try {
