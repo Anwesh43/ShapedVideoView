@@ -36,15 +36,29 @@ public class PacCreateShapedVideoView extends ShapedVideoView {
 
         }
     }
-    private class PacCreator {
-        public PacCreator() {
-
+    public void handleTap(float x,float y) {
+        switch(pacs.size()%4) {
+            case 0:
+                pacs.add(new Pac(0,y,1,0));
+                break;
+            case 1:
+                pacs.add(new Pac(w,y,-1,0));
+                break;
+            case 2:
+                pacs.add(new Pac(x,0,0,1));
+                break;
+            case 3:
+                pacs.add(new Pac(x,h,0,-1));
+                break;
+            default:
+                break;
         }
+
     }
     private class Pac {
         private boolean stop = false;
         private float x,y,a=0,dir = 1,xDir = 0,yDir = 0;
-        public Pac(float x,float y,float xDir,float yDir) {
+        public  Pac(float x,float y,float xDir,float yDir) {
             this.x = x;
             this.y = y;
             this.xDir = xDir;
