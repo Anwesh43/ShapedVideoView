@@ -6,13 +6,14 @@ import android.util.AttributeSet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by anweshmishra on 02/03/17.
  */
 public class PacCreateShapedVideoView extends ShapedVideoView {
     private int w,h,time = 0;
-    private List<Pac> pacs = new ArrayList<>();
+    private ConcurrentLinkedQueue<Pac> pacs = new ConcurrentLinkedQueue<>();
     public PacCreateShapedVideoView(Context context){
         super(context);
     }
@@ -73,9 +74,17 @@ public class PacCreateShapedVideoView extends ShapedVideoView {
             this.yDir = yDir;
         }
         public void draw(Canvas canvas,Paint paint) {
+            float deg = 90-90*xDir+90*Math.abs(yDir)-90*yDir;
+            if(xDir == 0) {
+                deg += (90-90*yDir);
+            }
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(Color.parseColor("#AAFF6F00"));
-            canvas.drawArc(new RectF(x-canvas.getWidth()/20,y-canvas.getWidth()/20,x+canvas.getWidth()/20,y+canvas.getWidth()/20),a,360-a,true,paint);
+            canvas.save();
+            canvas.translate(x,y);
+            canvas.rotate(deg);
+            canvas.drawArc(new RectF(-canvas.getWidth()/20,-canvas.getWidth()/20,canvas.getWidth()/20,canvas.getWidth()/20),a,360-a,true,paint);
+            canvas.restore();
         }
         public void update() {
             a+=5*dir;
