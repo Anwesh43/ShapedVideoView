@@ -73,7 +73,7 @@ public class PacCreateShapedVideoView extends ShapedVideoView {
         public void draw(Canvas canvas,Paint paint) {
             float deg = 90-90*xDir+90*Math.abs(yDir)-90*yDir;
             paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Color.parseColor("#AAFF6F00"));
+            paint.setColor(Color.parseColor("#99FF6F00"));
             canvas.save();
             canvas.translate(x,y);
             canvas.rotate(deg);
