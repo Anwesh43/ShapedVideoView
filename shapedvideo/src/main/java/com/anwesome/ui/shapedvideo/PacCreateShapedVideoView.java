@@ -3,9 +3,6 @@ package com.anwesome.ui.shapedvideo;
 import android.content.Context;
 import android.graphics.*;
 import android.util.AttributeSet;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -38,7 +35,7 @@ public class PacCreateShapedVideoView extends ShapedVideoView {
         }
         time++;
         try {
-            Thread.sleep(100);
+            Thread.sleep(50);
             invalidate();
         }
         catch (Exception ex) {
@@ -75,15 +72,12 @@ public class PacCreateShapedVideoView extends ShapedVideoView {
         }
         public void draw(Canvas canvas,Paint paint) {
             float deg = 90-90*xDir+90*Math.abs(yDir)-90*yDir;
-            if(xDir == 0) {
-                deg += (90-90*yDir);
-            }
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(Color.parseColor("#AAFF6F00"));
             canvas.save();
             canvas.translate(x,y);
             canvas.rotate(deg);
-            canvas.drawArc(new RectF(-canvas.getWidth()/20,-canvas.getWidth()/20,canvas.getWidth()/20,canvas.getWidth()/20),a,360-a,true,paint);
+            canvas.drawArc(new RectF(-canvas.getWidth()/10,-canvas.getWidth()/10,canvas.getWidth()/10,canvas.getWidth()/10),a,360-2*a,true,paint);
             canvas.restore();
         }
         public void update() {
