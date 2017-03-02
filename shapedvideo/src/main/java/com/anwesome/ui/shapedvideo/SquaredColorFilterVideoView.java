@@ -29,12 +29,16 @@ public class SquaredColorFilterVideoView extends ShapedVideoView {
     }
     public void drawElements(Canvas canvas, Paint paint) {
         if(time == 0) {
-            int w = canvas.getWidth()/4,h = canvas.getHeight()/4;
-            int colors[] = {getTransparentColor("#3F51B5"),getTransparentColor("#f44336"),getTransparentColor("#0097A7"),getTransparentColor("#D84315")};
+            int w = canvas.getWidth(),h = canvas.getHeight();
+            int colors[] = {getTransparentColor("#3F51B5"),getTransparentColor("#43A047"),getTransparentColor("#0097A7"),getTransparentColor("#D84315")};
             int i = 0;
             for(int color:colors) {
-                filters.add(new SquareColorFilter(color,(w/4)*i%2,(h/4)*(i/2),w/2,h/2));
+                filters.add(new SquareColorFilter(color,((w/2)*(i%2))+w/4,(h/2)*(i/2)+h/4,w/2,h/2));
+                i++;
             }
+        }
+        for(SquareColorFilter filter:filters) {
+            filter.draw(canvas,paint);
         }
         time++;
         if(isAnimated) {
@@ -70,8 +74,10 @@ public class SquaredColorFilterVideoView extends ShapedVideoView {
             else {
                 throw  new UnsupportedOperationException();
             }
+            this.color = color;
         }
         public void draw(Canvas canvas,Paint paint) {
+            paint.setStyle(Paint.Style.FILL);
             paint.setColor(color);
             canvas.save();
             canvas.translate(x,y);
