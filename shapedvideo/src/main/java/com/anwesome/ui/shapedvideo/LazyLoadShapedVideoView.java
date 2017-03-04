@@ -22,7 +22,9 @@ public class LazyLoadShapedVideoView extends ShapedVideoView {
         }
         time++;
         if(time < 24) {
+            canvas.drawColor(Color.WHITE);
             loader.draw(canvas,paint);
+            loader.update();
             try {
                 Thread.sleep(100);
                 invalidate();
@@ -36,8 +38,10 @@ public class LazyLoadShapedVideoView extends ShapedVideoView {
         }
 
     }
+    protected boolean shouldDraw() {
+        return true;
+    }
     public void start() {
-
     }
     private class Loader {
         private float x,y,deg = 0,radius;
@@ -47,11 +51,11 @@ public class LazyLoadShapedVideoView extends ShapedVideoView {
             this.radius = radius;
         }
         public void draw(Canvas canvas,Paint paint) {
-            paint.setColor(Color.GRAY);
+            paint.setColor(Color.BLACK);
             paint.setStrokeWidth(20);
             canvas.save();
             canvas.translate(x,y);
-            canvas.drawArc(new RectF(-radius,-radius,radius,radius),deg,deg+30,false,paint);
+            canvas.drawArc(new RectF(-radius,-radius,radius,radius),deg,30,false,paint);
             canvas.restore();
         }
         public void update() {
