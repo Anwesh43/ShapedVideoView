@@ -12,11 +12,28 @@ import android.util.AttributeSet;
  */
 public class LazyLoadShapedVideoView extends ShapedVideoView {
     private int time = 0;
+    private Loader loader;
     public LazyLoadShapedVideoView(Context context, AttributeSet attrs) {
         super(context,attrs);
     }
     public void drawElements(Canvas canvas,Paint paint) {
+        if(time == 0) {
+            loader = new Loader(canvas.getWidth()/2,canvas.getHeight()/2,canvas.getWidth()/3);
+        }
         time++;
+        if(time < 24) {
+            loader.draw(canvas,paint);
+            try {
+                Thread.sleep(100);
+                invalidate();
+            }
+            catch (Exception ex) {
+
+            }
+        }
+        else {
+            super.start();
+        }
 
     }
     public void start() {
@@ -31,7 +48,7 @@ public class LazyLoadShapedVideoView extends ShapedVideoView {
         }
         public void draw(Canvas canvas,Paint paint) {
             paint.setColor(Color.GRAY);
-            paint.setStrokeWidth(15);
+            paint.setStrokeWidth(20);
             canvas.save();
             canvas.translate(x,y);
             canvas.drawArc(new RectF(-radius,-radius,radius,radius),deg,deg+30,false,paint);
