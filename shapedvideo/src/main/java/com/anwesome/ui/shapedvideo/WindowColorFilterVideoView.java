@@ -25,16 +25,32 @@ public class WindowColorFilterVideoView extends ShapedVideoView {
         time++;
     }
     private class WindowColorFilter {
-
+        private IndividualFilterRect blueRect,redRect;
+        public WindowColorFilter() {
+            blueRect = new IndividualFilterRect("#3F51B5",1);
+            redRect = new IndividualFilterRect("#f44336",-1);
+        }
+        public void draw(Canvas canvas,Paint paint) {
+            canvas.save();
+            canvas.translate(w/2,h/2);
+            blueRect.draw(canvas,paint);
+            redRect.draw(canvas,paint);
+            canvas.restore();
+        }
+        public void update() {
+            blueRect.update();
+            redRect.update();
+        }
     }
     private class IndividualFilterRect {
-        private float x,y,w_rect,h_rect,h_init=0,dir = 0;
-        private String colorHex="#AA";
-        public IndividualFilterRect(String colorHex) {
+        private float x,y,w_rect,h_rect,h_init=0,dir = 0,scale=1;
+        private String colorHex="#99";
+        public IndividualFilterRect(String colorHex,float scale) {
             this.w_rect = w;
             this.h_rect = h/2;
-            this.x = 0;
-            this.y = 0;
+            this.x = -w/2;
+            this.y = -h/2;
+            this.scale = scale;
             this.colorHex += colorHex.replace("#","");
         }
         public void start() {
@@ -42,7 +58,10 @@ public class WindowColorFilterVideoView extends ShapedVideoView {
         }
         public void draw(Canvas canvas,Paint paint) {
             paint.setColor(Color.parseColor(colorHex));
-            canvas.drawRect(new RectF(x,y,w_rect,h_init),paint);
+            canvas.save();
+            canvas.scale(1,scale);
+            canvas.drawRect(new RectF(x,y,x+w_rect,y+h_init),paint);
+            canvas.restore();
         }
         public void update() {
             this.h_init+=dir*(this.h_rect/8);
