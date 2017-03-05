@@ -85,7 +85,7 @@ public class WindowColorFilterVideoView extends ShapedVideoView {
             this.colorHex += colorHex.replace("#","");
         }
         public void start() {
-            dir = 1;
+            dir = h_init == 0?1:-1;
         }
         public boolean stopped() {
             return this.dir == 0;
