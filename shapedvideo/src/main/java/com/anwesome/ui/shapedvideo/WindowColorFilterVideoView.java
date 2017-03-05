@@ -87,7 +87,7 @@ public class WindowColorFilterVideoView extends ShapedVideoView {
             dir = 1;
         }
         public boolean stopped() {
-            this.dir = 0;
+            return this.dir == 0;
         }
         public void draw(Canvas canvas,Paint paint) {
             paint.setColor(Color.parseColor(colorHex));
