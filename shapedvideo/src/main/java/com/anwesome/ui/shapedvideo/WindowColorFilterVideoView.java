@@ -3,12 +3,15 @@ package com.anwesome.ui.shapedvideo;
 import android.content.Context;
 import android.graphics.*;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 
 /**
  * Created by anweshmishra on 05/03/17.
  */
 public class WindowColorFilterVideoView extends ShapedVideoView {
     private int w,h,time = 0;
+    private boolean isAnimated = false;
+    private WindowColorFilter windowColorFilter;
     protected boolean shouldDraw() {
         return true;
     }
@@ -20,15 +23,39 @@ public class WindowColorFilterVideoView extends ShapedVideoView {
     }
     public void drawElements(Canvas canvas,Paint paint) {
         if(time == 0) {
-
+            w = canvas.getWidth();
+            h = canvas.getHeight();
+            windowColorFilter = new WindowColorFilter();
         }
+        paint.setStyle(Paint.Style.FILL);
+        windowColorFilter.draw(canvas,paint);
         time++;
+        if(isAnimated) {
+            windowColorFilter.update();
+            try {
+                Thread.sleep(50);
+                invalidate();
+            }
+            catch (Exception ex) {
+
+            }
+        }
+    }
+    public void handleTap(float x,float y) {
+        if(!isAnimated) {
+            isAnimated = true;
+            postInvalidate();
+        }
     }
     private class WindowColorFilter {
         private IndividualFilterRect blueRect,redRect;
         public WindowColorFilter() {
             blueRect = new IndividualFilterRect("#3F51B5",1);
             redRect = new IndividualFilterRect("#f44336",-1);
+        }
+        public void start() {
+            blueRect.start();
+            redRect.start();
         }
         public void draw(Canvas canvas,Paint paint) {
             canvas.save();
@@ -40,6 +67,9 @@ public class WindowColorFilterVideoView extends ShapedVideoView {
         public void update() {
             blueRect.update();
             redRect.update();
+            if(blueRect.stopped() && redRect.stopped()) {
+                isAnimated = false;
+            }
         }
     }
     private class IndividualFilterRect {
@@ -55,6 +85,9 @@ public class WindowColorFilterVideoView extends ShapedVideoView {
         }
         public void start() {
             dir = 1;
+        }
+        public boolean stopped() {
+            this.dir = 0;
         }
         public void draw(Canvas canvas,Paint paint) {
             paint.setColor(Color.parseColor(colorHex));
