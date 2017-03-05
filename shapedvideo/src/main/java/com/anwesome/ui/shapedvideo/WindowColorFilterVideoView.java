@@ -42,7 +42,8 @@ public class WindowColorFilterVideoView extends ShapedVideoView {
         }
     }
     public void handleTap(float x,float y) {
-        if(!isAnimated) {
+        if(!isAnimated && windowColorFilter!=null) {
+            windowColorFilter.start();
             isAnimated = true;
             postInvalidate();
         }
