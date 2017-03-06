@@ -2,11 +2,19 @@ package com.anwesome.ui.shapedvideo;
 
 import android.content.Context;
 import android.graphics.*;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 /**
  * Created by anweshmishra on 06/03/17.
  */
 public class TriangleColorFilterShapedVideoView extends ShapedVideoView {
     private int w,h,time = 0;
+    private boolean isAnimated = false;
+    private TriangleColorFilterShapedVideoView prev,current;
+    private List<TriangleColorFilter> filters = new LinkedList<>();
     public TriangleColorFilterShapedVideoView(Context context) {
         super(context);
     }
@@ -17,9 +25,23 @@ public class TriangleColorFilterShapedVideoView extends ShapedVideoView {
         if(time == 0) {
             w = canvas.getWidth();
             h = canvas.getHeight();
+            String colorHexes[] = {"3F51B5","e53935","00796B","F57F17"};
+            for(String colorHex:colorHexes) {
+                TriangleColorFilter triangleColorFilter = new TriangleColorFilter(colorHex);
+                filters.add(triangleColorFilter);
+            }
         }
         paint.setStyle(Paint.Style.FILL);
         time++;
+        if(!isAnimated) {
+            try {
+                Thread.sleep(50);
+                invalidate();
+            }
+            catch (Exception ex) {
+
+            }
+        }
     }
     public void handleTap(float x,float y) {
 
