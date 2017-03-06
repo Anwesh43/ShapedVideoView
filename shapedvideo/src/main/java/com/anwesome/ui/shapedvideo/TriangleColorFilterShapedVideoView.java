@@ -36,12 +36,16 @@ public class TriangleColorFilterShapedVideoView extends ShapedVideoView {
             }
         }
         paint.setStyle(Paint.Style.FILL);
+        for(TriangleColorFilter filter:filters) {
+            filter.draw(canvas,paint);
+        }
         time++;
         if(isAnimated) {
             if(prev!=null) {
                 prev.update();
                 if(prev.stopped()) {
                     current.show();
+                    prev = null;
                 }
             }
             else {
@@ -86,6 +90,7 @@ public class TriangleColorFilterShapedVideoView extends ShapedVideoView {
             this.colorHex+=colorHex.replace("#","");
         }
         public void draw(Canvas canvas,Paint paint) {
+            paint.setStyle(Paint.Style.FILL);
             paint.setColor(Color.parseColor(colorHex));
             canvas.save();
             canvas.translate(x,y);
