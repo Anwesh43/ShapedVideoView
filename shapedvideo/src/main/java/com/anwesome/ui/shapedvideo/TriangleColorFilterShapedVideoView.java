@@ -86,7 +86,7 @@ public class TriangleColorFilterShapedVideoView extends ShapedVideoView {
         public TriangleColorFilter(String colorHex) {
             this.x = w/2;
             this.y = h/2;
-            this.size = w/4;
+            this.size = w/2;
             this.colorHex+=colorHex.replace("#","");
         }
         public void draw(Canvas canvas,Paint paint) {
