@@ -37,7 +37,7 @@ public class TriangleColorFilterShapedVideoView extends ShapedVideoView {
         }
         paint.setStyle(Paint.Style.FILL);
         time++;
-        if(!isAnimated) {
+        if(isAnimated) {
             if(prev!=null) {
                 prev.update();
                 if(prev.stopped()) {
