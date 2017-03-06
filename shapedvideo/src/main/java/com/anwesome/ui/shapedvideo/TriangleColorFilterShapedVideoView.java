@@ -96,7 +96,18 @@ public class TriangleColorFilterShapedVideoView extends ShapedVideoView {
             canvas.restore();
         }
         public void update() {
-            rot+=10*dir;
+            rot+=36*dir;
+            scale+=0.1f*dir;
+            if(scale>=1) {
+                dir = 0;
+                scale = 1;
+                rot = 360;
+            }
+            if(scale<=0) {
+                dir =0;
+                rot = 0;
+                scale = 0;
+            }
         }
         public void show() {
             dir  = 1;
