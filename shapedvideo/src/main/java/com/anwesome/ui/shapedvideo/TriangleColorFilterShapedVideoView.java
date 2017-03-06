@@ -11,9 +11,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Created by anweshmishra on 06/03/17.
  */
 public class TriangleColorFilterShapedVideoView extends ShapedVideoView {
-    private int w,h,time = 0;
+    private int w,h,time = 0,index = 0;
     private boolean isAnimated = false;
-    private TriangleColorFilterShapedVideoView prev,current;
+    private TriangleColorFilter prev,current;
     private List<TriangleColorFilter> filters = new LinkedList<>();
     public TriangleColorFilterShapedVideoView(Context context) {
         super(context);
@@ -34,6 +34,22 @@ public class TriangleColorFilterShapedVideoView extends ShapedVideoView {
         paint.setStyle(Paint.Style.FILL);
         time++;
         if(!isAnimated) {
+            if(prev!=null) {
+                prev.update();
+                if(prev.stopped()) {
+                    current.show();
+                }
+            }
+            else {
+                current.update();
+                if(current.stopped()) {
+                    prev = current;
+                    current = null;
+                    isAnimated = false;
+                    index++;
+                    index%=filters.size();
+                }
+            }
             try {
                 Thread.sleep(50);
                 invalidate();
@@ -44,7 +60,17 @@ public class TriangleColorFilterShapedVideoView extends ShapedVideoView {
         }
     }
     public void handleTap(float x,float y) {
-
+        if(!isAnimated && current == null) {
+            current = filters.get(index);
+            if(prev == null) {
+                current.show();
+            }
+            else {
+                prev.clear();
+            }
+            isAnimated = true;
+            postInvalidate();
+        }
     }
     private class TriangleColorFilter {
         private float x,y,size,scale=0,rot=0,dir =0;
