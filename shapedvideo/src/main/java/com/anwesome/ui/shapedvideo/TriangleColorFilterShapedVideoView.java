@@ -2,6 +2,7 @@ package com.anwesome.ui.shapedvideo;
 
 import android.content.Context;
 import android.graphics.*;
+import android.util.AttributeSet;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +18,9 @@ public class TriangleColorFilterShapedVideoView extends ShapedVideoView {
     private List<TriangleColorFilter> filters = new LinkedList<>();
     public TriangleColorFilterShapedVideoView(Context context) {
         super(context);
+    }
+    public TriangleColorFilterShapedVideoView(Context context, AttributeSet attrs) {
+        super(context,attrs);
     }
     protected boolean shouldDraw() {
         return true;
