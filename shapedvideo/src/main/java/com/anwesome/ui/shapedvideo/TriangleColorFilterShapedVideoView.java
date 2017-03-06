@@ -61,6 +61,12 @@ public class TriangleColorFilterShapedVideoView extends ShapedVideoView {
             canvas.translate(x,y);
             canvas.scale(scale,scale);
             canvas.rotate(rot);
+            Path path = new Path();
+            path.moveTo(size/2,size/2);
+            path.lineTo(0,-size/2);
+            path.lineTo(-size/2,size/2);
+            path.lineTo(size/2,size/2);
+            canvas.drawPath(path,paint);
             canvas.restore();
         }
         public void update() {
