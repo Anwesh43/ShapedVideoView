@@ -45,7 +45,7 @@ public class RollingBallVideoView extends ShapedVideoView {
             y = h/2;
             initY = h/2;
             radius = w/16;
-            finalY = h/4;
+            finalY = (initY+h/3)/2;
             x = radius;
         }
         public void draw(Canvas canvas,Paint paint) {
@@ -66,7 +66,7 @@ public class RollingBallVideoView extends ShapedVideoView {
         }
         public void update() {
             x+=20;
-            y-=((initY-finalY)/10)*dir;
+            y-=((initY-finalY)/5)*dir;
             deg+=20;
             if(x+radius>=w) {
                 x = radius;
