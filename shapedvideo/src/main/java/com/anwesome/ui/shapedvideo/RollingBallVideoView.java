@@ -51,11 +51,13 @@ public class RollingBallVideoView extends ShapedVideoView {
         }
         public void draw(Canvas canvas,Paint paint) {
             int colors[] = {Color.parseColor("#AA3F51B5"),Color.parseColor("#AAf44336")};
+            paint.setStyle(Paint.Style.FILL);
             int dir[] = {1,-1};
             canvas.save();
             canvas.translate(x,y);
             canvas.rotate(deg);
             for(int i=0;i<2;i++) {
+                paint.setColor(colors[i]);
                 canvas.save();
                 canvas.scale(1,dir[i]);
                 canvas.drawArc(new RectF(-radius,-radius,radius,radius),0,180,true,paint);
@@ -66,6 +68,7 @@ public class RollingBallVideoView extends ShapedVideoView {
         public void update() {
             x+=20;
             y-=((initY-finalY)/10)*dir;
+            deg+=20;
             if(x+radius>=w) {
                 x = radius;
             }
