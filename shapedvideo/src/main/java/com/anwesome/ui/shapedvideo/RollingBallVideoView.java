@@ -42,10 +42,9 @@ public class RollingBallVideoView extends ShapedVideoView {
     private class RollingBall {
         private float x=0,y = 0,dir = 0,initY=0,radius=50,deg=0,finalY;
         public RollingBall() {
-
             y = h/2;
             initY = h/2;
-            radius = w/4;
+            radius = w/16;
             finalY = h/4;
             x = radius;
         }
