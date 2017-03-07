@@ -9,7 +9,6 @@ import android.util.AttributeSet;
  */
 public class RollingBallVideoView extends ShapedVideoView {
     private int w,h,time = 0;
-    private boolean isAnimated = false;
     private RollingBall rollingBall;
     public RollingBallVideoView(Context context) {
         super(context);
@@ -29,6 +28,13 @@ public class RollingBallVideoView extends ShapedVideoView {
         rollingBall.draw(canvas,paint);
         rollingBall.update();
         time++;
+        try {
+            Thread.sleep(50);
+            invalidate();
+        }
+        catch (Exception ex) {
+
+        }
     }
     public void handleTap(float x,float y) {
         rollingBall.jump();
