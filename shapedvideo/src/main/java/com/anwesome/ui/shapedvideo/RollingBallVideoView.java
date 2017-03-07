@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 public class RollingBallVideoView extends ShapedVideoView {
     private int w,h,time = 0;
     private boolean isAnimated = false;
+    private RollingBall rollingBall;
     public RollingBallVideoView(Context context) {
         super(context);
     }
@@ -23,20 +24,24 @@ public class RollingBallVideoView extends ShapedVideoView {
         if(time == 0) {
             w = canvas.getWidth();
             h = canvas.getHeight();
+            rollingBall = new RollingBall();
         }
+        rollingBall.draw(canvas,paint);
+        rollingBall.update();
         time++;
     }
     public void handleTap(float x,float y) {
-
+        rollingBall.jump();
     }
     private class RollingBall {
         private float x=0,y = 0,dir = 0,initY=0,radius=50,deg=0,finalY;
         public RollingBall() {
-            x = 0;
+
             y = h/2;
             initY = h/2;
             radius = w/4;
             finalY = h/4;
+            x = radius;
         }
         public void draw(Canvas canvas,Paint paint) {
             int colors[] = {Color.parseColor("#AA3F51B5"),Color.parseColor("#AAf44336")};
@@ -55,6 +60,9 @@ public class RollingBallVideoView extends ShapedVideoView {
         public void update() {
             x+=20;
             y-=((initY-finalY)/10)*dir;
+            if(x+radius>=w) {
+                x = radius;
+            }
             if(y<=finalY) {
                 dir = -1;
                 y = finalY;
