@@ -3,10 +3,8 @@ package com.anwesome.ui.shapedvideo;
 import android.content.Context;
 import android.graphics.*;
 import android.util.AttributeSet;
+import java.util.*;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by anweshmishra on 06/03/17.
