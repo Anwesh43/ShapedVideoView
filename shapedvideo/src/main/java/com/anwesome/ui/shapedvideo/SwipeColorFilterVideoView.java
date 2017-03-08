@@ -89,8 +89,8 @@ public class SwipeColorFilterVideoView extends ShapedVideoView {
             this.colorHex += colorHex.replace("#","");
             x = w/2;
             y = h/2;
-            wRect = 4*w/5;
-            hRect = 4*h/5;
+            wRect = 19*w/20;
+            hRect = 19*h/20;
         }
         public void reset() {
             x = w/2;
@@ -102,7 +102,7 @@ public class SwipeColorFilterVideoView extends ShapedVideoView {
             canvas.save();
             canvas.translate(x,y);
             canvas.rotate(deg);
-            canvas.drawRoundRect(new RectF(-wRect/2,-hRect/2,wRect/2,hRect/2),wRect/8,hRect/8,paint);
+            canvas.drawRoundRect(new RectF(-wRect/2,-hRect/2,wRect/2,hRect/2),Math.max(wRect,hRect)/8,Math.max(wRect,hRect)/8,paint);
             canvas.restore();
         }
         public boolean stopped() {
