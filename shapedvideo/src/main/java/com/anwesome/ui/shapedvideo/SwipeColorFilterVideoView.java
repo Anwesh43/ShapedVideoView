@@ -36,8 +36,8 @@ public class SwipeColorFilterVideoView extends ShapedVideoView {
             }
         }
         paint.setStyle(Paint.Style.FILL);
-        for(SwipedColorFilter colorFilter:colorFilters) {
-            colorFilter.draw(canvas,paint);
+        if(currentIndex<colorFilters.size()) {
+            colorFilters.get(currentIndex).draw(canvas,paint);
         }
         time++;
         if(isAnimated) {
@@ -51,6 +51,7 @@ public class SwipeColorFilterVideoView extends ShapedVideoView {
                     if(currentIndex<0) {
                         currentIndex = colorFilters.size()-1;
                     }
+                    isAnimated = false;
                 }
             }
             try {
@@ -84,28 +85,29 @@ public class SwipeColorFilterVideoView extends ShapedVideoView {
     }
     private class SwipedColorFilter {
         private String colorHex = "#AA";
-        private float x=0,y = 0,size,deg=0,dir = 0;
+        private float x=0,y = 0,wRect,hRect,deg=0,dir = 0;
         public SwipedColorFilter(String colorHex) {
             this.colorHex += colorHex.replace("#","");
             x = w/2;
             y = h/2;
-            size = w/2;
+            wRect = w/2;
+            hRect = h/2;
         }
         public void draw(Canvas canvas,Paint paint) {
             paint.setColor(Color.parseColor(colorHex));
             canvas.save();
             canvas.translate(x,y);
             canvas.rotate(deg);
-            canvas.drawRoundRect(new RectF(-size/2,-size/2,size/2,size/2),size/8,size/8,paint);
+            canvas.drawRoundRect(new RectF(-wRect/2,-hRect/2,wRect/2,hRect/2),wRect/8,hRect/8,paint);
             canvas.restore();
         }
         public boolean stopped() {
             return dir == 0;
         }
         public void update() {
-            x += dir*20;
-            y-=Math.abs(dir)*10;
-            if(x+size<0 || x-size>=w) {
+            x += dir*(w/10);
+            y-=Math.abs(dir)*(h/10);
+            if(x+wRect/2<0 || x-wRect/2>=w) {
                 dir = 0;
             }
         }
