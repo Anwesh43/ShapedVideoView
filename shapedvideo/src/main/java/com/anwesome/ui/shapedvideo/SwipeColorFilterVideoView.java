@@ -12,13 +12,16 @@ import java.util.*;
 public class SwipeColorFilterVideoView extends ShapedVideoView {
     private int w,h,time = 0,indexDir=0;
     private boolean isAnimated = false;
+    private GestureDetector swipeGestureDetector;
     private List<SwipedColorFilter> colorFilters = new ArrayList<>();
     private int currentIndex = 0;
     public SwipeColorFilterVideoView(Context context, AttributeSet attrs) {
         super(context,attrs);
+        swipeGestureDetector = new GestureDetector(context,new SwipeGestureListener());
     }
     public SwipeColorFilterVideoView(Context context) {
         super(context);
+        swipeGestureDetector = new GestureDetector(context,new SwipeGestureListener());
     }
     public boolean shouldDraw() {
         return true;
@@ -32,10 +35,10 @@ public class SwipeColorFilterVideoView extends ShapedVideoView {
                 colorFilters.add(new SwipedColorFilter(colorHex));
             }
         }
+        paint.setStyle(Paint.Style.FILL);
         for(SwipedColorFilter colorFilter:colorFilters) {
             colorFilter.draw(canvas,paint);
         }
-        paint.setStyle(Paint.Style.FILL);
         time++;
         if(isAnimated) {
             if(currentIndex<colorFilters.size()) {
@@ -60,7 +63,7 @@ public class SwipeColorFilterVideoView extends ShapedVideoView {
         }
     }
     public boolean onTouchEvent(MotionEvent event) {
-        return true;
+        return swipeGestureDetector.onTouchEvent(event);
     }
     private class SwipeGestureListener extends GestureDetector.SimpleOnGestureListener {
         public boolean onDown(MotionEvent event) {
@@ -73,6 +76,8 @@ public class SwipeColorFilterVideoView extends ShapedVideoView {
             if(!isAnimated && currentIndex<colorFilters.size()) {
                 indexDir = e1.getX()<e2.getX()?1:-1;
                 colorFilters.get(currentIndex).startMoving(indexDir);
+                isAnimated = true;
+                postInvalidate();
             }
             return true;
         }
