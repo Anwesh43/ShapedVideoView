@@ -44,6 +44,7 @@ public class SwipeColorFilterVideoView extends ShapedVideoView {
             if(currentIndex<colorFilters.size()) {
                 colorFilters.get(currentIndex).update();
                 if(colorFilters.get(currentIndex).stopped()) {
+                    colorFilters.get(currentIndex).reset();
                     currentIndex+=indexDir;
                     if(currentIndex<0) {
                         currentIndex = colorFilters.size()-1;
@@ -88,8 +89,13 @@ public class SwipeColorFilterVideoView extends ShapedVideoView {
             this.colorHex += colorHex.replace("#","");
             x = w/2;
             y = h/2;
-            wRect = w/2;
-            hRect = h/2;
+            wRect = 4*w/5;
+            hRect = 4*h/5;
+        }
+        public void reset() {
+            x = w/2;
+            y = h/2;
+            deg = 0;
         }
         public void draw(Canvas canvas,Paint paint) {
             paint.setColor(Color.parseColor(colorHex));
