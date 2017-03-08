@@ -45,12 +45,10 @@ public class SwipeColorFilterVideoView extends ShapedVideoView {
                 colorFilters.get(currentIndex).update();
                 if(colorFilters.get(currentIndex).stopped()) {
                     currentIndex+=indexDir;
-                    if(currentIndex>=colorFilters.size()) {
-                        currentIndex = 0;
-                    }
                     if(currentIndex<0) {
                         currentIndex = colorFilters.size()-1;
                     }
+                    currentIndex%=colorFilters.size();
                     isAnimated = false;
                 }
             }
