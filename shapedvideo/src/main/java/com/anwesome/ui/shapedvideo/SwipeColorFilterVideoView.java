@@ -54,7 +54,7 @@ public class SwipeColorFilterVideoView extends ShapedVideoView {
                 }
             }
             try {
-                Thread.sleep(20);
+                Thread.sleep(40);
                 invalidate();
             }
             catch (Exception ex) {
