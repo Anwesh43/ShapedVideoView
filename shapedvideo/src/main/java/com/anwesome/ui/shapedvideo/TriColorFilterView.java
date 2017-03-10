@@ -10,8 +10,9 @@ import android.util.AttributeSet;
  * Created by anweshmishra on 10/03/17.
  */
 public class TriColorFilterView extends ShapedVideoView {
-    private int w,h,time = 0;
+    private int w,h,time = 0,dir = 0;
     private TriColorFilter curr;
+    private boolean isAnimated = false;
     public boolean shouldDraw() {
         return true;
     }
@@ -35,20 +36,82 @@ public class TriColorFilterView extends ShapedVideoView {
             }
             root.next = curr;
             curr.prev = root;
+            initializePrevAndCurrFilters();
+        }
+        if(curr!=null) {
+            curr.draw(canvas,paint);
+            if(curr.prev!=null) {
+                curr.prev.draw(canvas,paint);
+            }
+            if(curr.next!=null) {
+                curr.next.draw(canvas,paint);
+            }
         }
         time++;
+        if(isAnimated) {
+            if(curr!=null) {
+                curr.update();
+                if(curr.prev!=null) {
+                    curr.prev.update();
+                }
+                if(curr.next!=null) {
+                    curr.next.update();
+                }
+                if(curr.stopped()) {
+                    isAnimated = false;
+                    if(dir == 1) {
+                        curr = curr.prev;
+                    }
+                    if(dir == -1) {
+                        curr = curr.next;
+                    }
+                    if(curr!=null) {
+                        initializePrevAndCurrFilters();
+                    }
+                }
+            }
+            try {
+                Thread.sleep(100);
+                invalidate();
+            }
+            catch (Exception ex) {
 
+            }
+        }
+    }
+    private void initializePrevAndCurrFilters() {
+        curr.setStartingPosition(h/2);
+        TriColorFilter prev = curr.prev;
+        TriColorFilter next = curr.next;
+        if(prev!=null) {
+            prev.setStartingPosition(-h/8);
+        }
+        if(curr!=null) {
+            curr.setStartingPosition(5*h/8);
+        }
     }
     public void handleTap(float x,float y) {
-
+        if(!isAnimated && curr!=null && dir == 0) {
+            if(y<curr.y-curr.size/2) {
+                dir = 1;
+            }
+            else if(y>curr.y+curr.size/2) {
+                dir = -1;
+            }
+            isAnimated = true;
+            postInvalidate();
+        }
     }
     private class TriColorFilter {
-        private float x,y,deg = 0,dir = 1,size = 100;
+        private float x,y,deg = 0,size = 100;
         private String colorHex = "#99";
         private TriColorFilter prev,next;
+        public void setStartingPosition(float y) {
+            this.y = y;
+        }
         public TriColorFilter(String colorHex) {
             x = w/2;
-            y = h/2;
+            y = -h/2;
             size = h/4;
             this.colorHex += colorHex.replace("#","");
         }
@@ -79,13 +142,13 @@ public class TriColorFilterView extends ShapedVideoView {
             }
             else if(dir == 1) {
                 y+=h/12;
-                if(y-size/2>=h) {
+                if(y-size/2>=h && this.equals(curr)) {
                     dir = 0;
                 }
             }
             else if(dir == -1) {
                 y-=h/12;
-                if(y+size/2<=0) {
+                if(y+size/2<=0 && this.equals(curr)) {
                     dir = 0;
                 }
             }
