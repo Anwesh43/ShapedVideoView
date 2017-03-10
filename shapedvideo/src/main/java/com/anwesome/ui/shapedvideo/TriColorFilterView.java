@@ -2,6 +2,7 @@ package com.anwesome.ui.shapedvideo;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
@@ -20,7 +21,7 @@ public class TriColorFilterView extends ShapedVideoView {
         super(context);
     }
     public TriColorFilterView(Context context, AttributeSet attrs) {
-        super(context);
+        super(context,attrs);
     }
     public void drawElements(Canvas canvas, Paint paint) {
         if(time == 0) {
@@ -39,6 +40,7 @@ public class TriColorFilterView extends ShapedVideoView {
             initializePrevAndCurrFilters();
         }
         if(curr!=null) {
+            paint.setStyle(Paint.Style.FILL);
             curr.draw(canvas,paint);
             if(curr.prev!=null) {
                 curr.prev.draw(canvas,paint);
@@ -59,10 +61,10 @@ public class TriColorFilterView extends ShapedVideoView {
                 }
                 if(curr.stopped()) {
                     isAnimated = false;
-                    if(dir == 1) {
+                    if(curr.y-curr.size/2>=h) {
                         curr = curr.prev;
                     }
-                    if(dir == -1) {
+                    else if(curr.y+curr.size/2<=0) {
                         curr = curr.next;
                     }
                     if(curr!=null) {
@@ -84,19 +86,19 @@ public class TriColorFilterView extends ShapedVideoView {
         TriColorFilter prev = curr.prev;
         TriColorFilter next = curr.next;
         if(prev!=null) {
-            prev.setStartingPosition(-h/8);
+            prev.setStartingPosition(-next.size/2);
         }
-        if(curr!=null) {
-            curr.setStartingPosition(5*h/8);
+        if(next!=null) {
+            next.setStartingPosition(h+next.size/2);
         }
     }
     public void handleTap(float x,float y) {
         if(!isAnimated && curr!=null && dir == 0) {
             if(y<curr.y-curr.size/2) {
-                dir = 1;
+                dir = -1;
             }
             else if(y>curr.y+curr.size/2) {
-                dir = -1;
+                dir = 1;
             }
             isAnimated = true;
             postInvalidate();
@@ -122,6 +124,7 @@ public class TriColorFilterView extends ShapedVideoView {
             this.next = next;
         }
         public void draw(Canvas canvas,Paint paint) {
+            paint.setColor(Color.parseColor(colorHex));
             canvas.save();
             canvas.translate(x,y);
             canvas.rotate(deg);
@@ -137,18 +140,12 @@ public class TriColorFilterView extends ShapedVideoView {
             return dir == 0;
         }
         public void update() {
-            if(dir == 1 && deg < 180) {
-                deg+=36;
+            if((dir == -1 && deg>0) || (dir == 1 && deg<180)) {
+                deg+=dir*36;
             }
-            else if(dir == 1) {
-                y+=h/12;
-                if(y-size/2>=h && this.equals(curr)) {
-                    dir = 0;
-                }
-            }
-            else if(dir == -1) {
-                y-=h/12;
-                if(y+size/2<=0 && this.equals(curr)) {
+            else {
+                y+=dir*(h/12);
+                if(this.equals(curr) && ((dir == 1 && y-size/2>=h) || (dir == -1 && y+size/2<=0))) {
                     dir = 0;
                 }
             }
