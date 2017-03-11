@@ -21,6 +21,9 @@ public class DrawInVideoView extends ShapedVideoView{
     private boolean isAnimated = false;
     private CircularColor prev=null,curr=null;
     private float colorY;
+    private ConcurrentLinkedQueue<ColorShape> colorShapes = new ConcurrentLinkedQueue<>();
+    private ColorShape colorShape;
+    private boolean isDown = false;
     private ConcurrentLinkedQueue<CircularColor> circularColors = new ConcurrentLinkedQueue<>();
     public DrawInVideoView(Context context) {
         super(context);
@@ -56,6 +59,12 @@ public class DrawInVideoView extends ShapedVideoView{
         }
         for(CircularColor circularColor:circularColors) {
             circularColor.draw(canvas,paint);
+        }
+        if(colorShape!=null) {
+            colorShape.draw(canvas,paint);
+        }
+        for(ColorShape colorShape:colorShapes) {
+            colorShape.draw(canvas,paint);
         }
         time++;
         if(isAnimated) {
@@ -104,10 +113,24 @@ public class DrawInVideoView extends ShapedVideoView{
                         postInvalidate();
                     }
                 }
+                else {
+                    if(!isDown && colorShape==null) {
+                        isDown = true;
+                        colorShape = new ColorShape();
+                        colorShape.addPoint(new PointF(x,y));
+                    }
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
+                if(isDown) {
+                    colorShape.addPoint(new PointF(x,y));
+                }
                 break;
             case MotionEvent.ACTION_UP:
+                if(isDown) {
+                    colorShape = null;
+                    isDown = false;
+                }
                 break;
             default:
                 break;
