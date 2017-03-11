@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
@@ -14,6 +16,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class DrawInVideoView extends ShapedVideoView{
     private int time = 0;
+    private int currColor = Color.RED;
+    private float minScale = 0.5f;
     private boolean isAnimated = false;
     private CircularColor prev=null,curr=null;
     private float colorY;
@@ -37,9 +41,17 @@ public class DrawInVideoView extends ShapedVideoView{
             String colorsHexes[]={"00BCD4","ef5350","F57F17","43A047","5E35B1"};
             float gap = (2*canvas.getWidth())/(3*colorsHexes.length+1),x = gap;
             colorY = (canvas.getHeight()*8)/10;
+            int index = 0;
             for(String colorHex:colorsHexes) {
-                circularColors.add(new CircularColor(colorHex,x,colorY+gap/2,gap));
+                CircularColor circularColor = new CircularColor(colorHex,x,colorY+gap/2,gap);
+                circularColors.add(circularColor);
+                if(index == 0) {
+                    prev = circularColor;
+                    prev.scale = 1.0f;
+                    currColor = circularColor.getColor();
+                }
                 x+=(3*gap)/2;
+                index++;
             }
         }
         for(CircularColor circularColor:circularColors) {
@@ -47,7 +59,7 @@ public class DrawInVideoView extends ShapedVideoView{
         }
         time++;
         if(isAnimated) {
-            if(curr==null) {
+            if(curr!=null) {
                 curr.update();
                 if(prev!=null) {
                     prev.update();
@@ -77,13 +89,14 @@ public class DrawInVideoView extends ShapedVideoView{
             case MotionEvent.ACTION_DOWN:
                 if(y>=colorY && !isAnimated && curr==null) {
                     for(CircularColor circularColor:circularColors) {
-                        if(circularColor.scale==0.4f && circularColor.handleTap(x,y)) {
+                        if(circularColor.scale==minScale && circularColor.handleTap(x,y)) {
                             curr = circularColor;
                             break;
                         }
                     }
                     if(curr!=null) {
                         curr.startUpdating(1);
+                        currColor = curr.getColor();
                         if(prev!=null) {
                             prev.startUpdating(-1);
                         }
@@ -101,8 +114,39 @@ public class DrawInVideoView extends ShapedVideoView{
         }
         return true;
     }
+    private class ColorShape {
+        private ConcurrentLinkedQueue<PointF> points = new ConcurrentLinkedQueue<>();
+        public ColorShape() {
+
+        }
+        public void draw(Canvas canvas,Paint paint) {
+            int index = 0;
+            paint.setColor(currColor);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(30);
+            paint.setStrokeCap(Paint.Cap.BUTT);
+            paint.setStrokeJoin(Paint.Join.ROUND);
+            Path path = new Path();
+            for(PointF point:points) {
+                if(index == 0) {
+                    path.moveTo(point.x,point.y);
+                }
+                else {
+                    path.lineTo(point.x,point.y);
+                }
+                index++;
+            }
+            canvas.drawPath(path,paint);
+        }
+        public void addPoint(PointF point) {
+            points.add(point);
+        }
+        public int hashCode() {
+            return points.hashCode();
+        }
+    }
     private class CircularColor {
-        private float x,y,r,scale = 0.4f,dir=0;
+        private float x,y,r,scale = minScale,dir=0;
         private String colorHex="#99";
         public CircularColor(String colorHex,float x,float y,float r) {
             this.colorHex += colorHex.replace("#","");
@@ -138,8 +182,8 @@ public class DrawInVideoView extends ShapedVideoView{
                 this.scale = 1;
                 this.dir = 0;
             }
-            if(this.scale<=0.4f) {
-                this.scale = 0.4f;
+            if(this.scale<=minScale) {
+                this.scale = minScale;
                 this.dir = 0;
             }
         }
