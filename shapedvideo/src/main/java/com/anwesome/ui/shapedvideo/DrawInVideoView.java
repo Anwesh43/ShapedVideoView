@@ -18,10 +18,10 @@ public class DrawInVideoView extends ShapedVideoView{
     private CircularColor prev=null,curr=null;
     private float colorY;
     private ConcurrentLinkedQueue<CircularColor> circularColors = new ConcurrentLinkedQueue<>();
-    private DrawInVideoView(Context context) {
+    public DrawInVideoView(Context context) {
         super(context);
     }
-    private DrawInVideoView(Context context, AttributeSet attrs) {
+    public DrawInVideoView(Context context, AttributeSet attrs) {
         super(context,attrs);
     }
     public boolean shouldDraw() {
