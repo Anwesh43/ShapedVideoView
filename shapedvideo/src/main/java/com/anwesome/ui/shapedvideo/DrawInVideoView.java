@@ -118,18 +118,21 @@ public class DrawInVideoView extends ShapedVideoView{
                         isDown = true;
                         colorShape = new ColorShape();
                         colorShape.addPoint(new PointF(x,y));
+                        postInvalidate();
                     }
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
                 if(isDown) {
                     colorShape.addPoint(new PointF(x,y));
+                    postInvalidate();
                 }
                 break;
             case MotionEvent.ACTION_UP:
                 if(isDown) {
                     colorShape = null;
                     isDown = false;
+                    postInvalidate();
                 }
                 break;
             default:
@@ -146,7 +149,7 @@ public class DrawInVideoView extends ShapedVideoView{
             int index = 0;
             paint.setColor(currColor);
             paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(30);
+            paint.setStrokeWidth(canvas.getWidth()/12);
             paint.setStrokeCap(Paint.Cap.BUTT);
             paint.setStrokeJoin(Paint.Join.ROUND);
             Path path = new Path();
