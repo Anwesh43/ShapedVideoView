@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -19,6 +20,9 @@ public class DrawInVideoView extends ShapedVideoView{
     private ConcurrentLinkedQueue<CircularColor> circularColors = new ConcurrentLinkedQueue<>();
     private DrawInVideoView(Context context) {
         super(context);
+    }
+    private DrawInVideoView(Context context, AttributeSet attrs) {
+        super(context,attrs);
     }
     public boolean shouldDraw() {
         return true;
