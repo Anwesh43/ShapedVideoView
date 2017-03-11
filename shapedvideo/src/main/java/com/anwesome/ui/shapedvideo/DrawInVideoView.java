@@ -116,7 +116,7 @@ public class DrawInVideoView extends ShapedVideoView{
                 else {
                     if(!isDown && colorShape==null) {
                         isDown = true;
-                        colorShape = new ColorShape();
+                        colorShape = new ColorShape(currColor);
                         colorShape.addPoint(new PointF(x,y));
                         postInvalidate();
                     }
@@ -142,13 +142,14 @@ public class DrawInVideoView extends ShapedVideoView{
         return true;
     }
     private class ColorShape {
+        private int color;
         private ConcurrentLinkedQueue<PointF> points = new ConcurrentLinkedQueue<>();
-        public ColorShape() {
-
+        public ColorShape(int color) {
+            this.color = color;
         }
         public void draw(Canvas canvas,Paint paint) {
             int index = 0;
-            paint.setColor(currColor);
+            paint.setColor(color);
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth(canvas.getWidth()/12);
             paint.setStrokeCap(Paint.Cap.BUTT);
