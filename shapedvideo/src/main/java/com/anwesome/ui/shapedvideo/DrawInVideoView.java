@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class DrawInVideoView extends ShapedVideoView{
     private int time = 0;
     private int currColor = Color.RED;
-    private float minScale = 0.5f;
+    private float minScale = 0.5f,maxScale = 0.9f;
     private boolean isAnimated = false;
     private CircularColor prev=null,curr=null;
     private float colorY;
@@ -50,7 +50,7 @@ public class DrawInVideoView extends ShapedVideoView{
                 circularColors.add(circularColor);
                 if(index == 0) {
                     prev = circularColor;
-                    prev.scale = 1.0f;
+                    prev.scale = maxScale;
                     currColor = circularColor.getColor();
                 }
                 x+=(3*gap)/2;
@@ -130,6 +130,7 @@ public class DrawInVideoView extends ShapedVideoView{
                 break;
             case MotionEvent.ACTION_UP:
                 if(isDown) {
+                    colorShapes.add(colorShape);
                     colorShape = null;
                     isDown = false;
                     postInvalidate();
@@ -173,7 +174,7 @@ public class DrawInVideoView extends ShapedVideoView{
     }
     private class CircularColor {
         private float x,y,r,scale = minScale,dir=0;
-        private String colorHex="#99";
+        private String colorHex="#77";
         public CircularColor(String colorHex,float x,float y,float r) {
             this.colorHex += colorHex.replace("#","");
             this.x = x;
@@ -204,8 +205,8 @@ public class DrawInVideoView extends ShapedVideoView{
         }
         public void update() {
             this.scale+=0.1f*dir;
-            if(this.scale>=1) {
-                this.scale = 1;
+            if(this.scale>=maxScale) {
+                this.scale = maxScale;
                 this.dir = 0;
             }
             if(this.scale<=minScale) {
