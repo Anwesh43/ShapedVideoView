@@ -26,12 +26,35 @@ public class DrawLineVideoView extends ShapedVideoView {
         return true;
     }
     public void drawElements(Canvas canvas, Paint paint) {
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.parseColor("#99f44336"));
+        if(currentLine!=null) {
+            currentLine.draw(canvas,paint);
+        }
+        for(Line line:lines) {
+            line.draw(canvas,paint);
+            line.update();
+        }
+        try {
+            Thread.sleep(50);
+            invalidate();
+        }
+        catch (Exception ex) {
+
+        }
     }
     public void handleTap(float x,float y) {
-
+        if(currentLine == null) {
+            currentLine = new Line(x,y);
+        }
+        else if(x!=currentLine.startX && y!=currentLine.startY){
+            currentLine.computeInnerPoints(x,y);
+            lines.add(currentLine);
+            currentLine = null;
+        }
     }
     private class Line {
-        private float startX,startY,endX,endY;
+        private float startX,startY;
         private int index = 0,time = 0,maxtime = 5;
         private boolean stopped = false;
         private ConcurrentLinkedQueue<LinePoint> linePoints = new ConcurrentLinkedQueue<>();
