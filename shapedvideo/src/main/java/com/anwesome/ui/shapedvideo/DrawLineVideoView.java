@@ -36,7 +36,7 @@ public class DrawLineVideoView extends ShapedVideoView {
             line.update();
         }
         try {
-            Thread.sleep(50);
+            Thread.sleep(30);
             invalidate();
         }
         catch (Exception ex) {
@@ -54,41 +54,41 @@ public class DrawLineVideoView extends ShapedVideoView {
         }
     }
     private class Line {
-        private float startX,startY;
+        private float startX,startY,theta = 0;
         private int index = 0,time = 0,maxtime = 5;
         private boolean stopped = false;
         private ConcurrentLinkedQueue<LinePoint> linePoints = new ConcurrentLinkedQueue<>();
         public Line(float startX,float startY) {
             this.startX = startX;
             this.startY = startY;
-            linePoints.add(new LinePoint(new PointF(this.startX,this.startY)));
+            linePoints.add(new LinePoint(new PointF(0,0)));
         }
         public void draw(Canvas canvas,Paint paint) {
             for(LinePoint linePoint:linePoints) {
+                canvas.save();
+                canvas.translate(startX,startY);
+                canvas.rotate(theta*(float)(180/Math.PI));
                 linePoint.draw(canvas,paint);
+                canvas.restore();
             }
         }
         private double getDistance(float x,float y) {
             return Math.sqrt(Math.pow(x-startX,2)+Math.pow(y-startY,2));
         }
         public void computeInnerPoints(float endX,float endY) {
-            float theta = (endX == startX)?90:(float)Math.atan((Math.abs(endY-startY))/(Math.abs(endX-startX)));
+            theta = (endX == startX)?90:(float)Math.atan((Math.abs(endY-startY))/(Math.abs(endX-startX)));
             float xDir = endX-startX == 0?0:(endX-startX)/Math.abs(endX-startX);
             float yDir = endY-startY == 0?0:(endY-startY)/Math.abs(endY-startY);
             if(xDir == yDir) {
-                theta += 90*(1-xDir);
+                theta += (Math.PI/2)*(1-xDir);
             }
             else if(xDir!=yDir) {
-                theta += 90*(-yDir+2);
+                theta += (Math.PI/2)*(-yDir+2);
             }
-            float x = startX,y = startY;
-            while(true) {
-                x+=2*linePointRadius*Math.cos(theta*Math.PI/180);
-                y+=2*linePointRadius*Math.sin(theta*Math.PI/180);
-                if(getDistance(x,y)>getDistance(endX,endY)) {
-                    break;
-                }
-                linePoints.add(new LinePoint(new PointF(x,y)));
+            float distance = (float)getDistance(endX,endY),x = 2*linePointRadius,y = 0;
+            while(x<distance) {
+                linePoints.add(new LinePoint(new PointF(x,0)));
+                x+=2*linePointRadius;
             }
         }
         public LinePoint getLinePoint(int index) {
@@ -123,7 +123,7 @@ public class DrawLineVideoView extends ShapedVideoView {
             }
         }
         public int hashCode() {
-            return linePoints.size();
+            return linePoints.hashCode();
         }
     }
     private class LinePoint {
