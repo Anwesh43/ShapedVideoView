@@ -85,7 +85,7 @@ public class DrawLineVideoView extends ShapedVideoView {
             else if(xDir!=yDir) {
                 theta += (Math.PI/2)*(-yDir+2);
             }
-            float distance = (float)getDistance(endX,endY),x = 2*linePointRadius,y = 0;
+            float distance = (float)getDistance(endX,endY),x = 2*linePointRadius;
             while(x<distance) {
                 linePoints.add(new LinePoint(new PointF(x,0)));
                 x+=2*linePointRadius;
@@ -109,13 +109,11 @@ public class DrawLineVideoView extends ShapedVideoView {
                 for(LinePoint linePoint:linePoints) {
                     linePoint.update();
                 }
-                if(index<linePoints.size()) {
+                if(index<linePoints.size()-1) {
                     if(getLinePoint(index).shouldNeighborJump) {
                         index++;
                     }
-                    if(index<linePoints.size()) {
-                        getLinePoint(index).jump();
-                    }
+                    getLinePoint(index).jump();
                 }
             }
             if(linePoints.size()>0 && getLinePoint(linePoints.size()-1).stopped) {
