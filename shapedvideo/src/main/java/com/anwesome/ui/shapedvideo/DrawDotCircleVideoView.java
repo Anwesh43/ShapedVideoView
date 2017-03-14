@@ -5,11 +5,16 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+
 /**
  * Created by anweshmishra on 14/03/17.
  */
 public class DrawDotCircleVideoView extends ShapedVideoView{
-    private final float dot_radius = 10,rSpeed = 15;
+    private final float dot_radius = 10,rSpeed = 15,gap = 10,dotCircleRadius=100;
     public DrawDotCircleVideoView(Context context, AttributeSet attrs) {
         super(context,attrs);
     }
@@ -18,6 +23,61 @@ public class DrawDotCircleVideoView extends ShapedVideoView{
     }
     protected boolean shouldDraw() {
         return true;
+    }
+    private class DotCircle {
+        private int index = 0;
+        private ConcurrentLinkedQueue<Dot> dots = new ConcurrentLinkedQueue<>();
+        private float x,y;
+        public DotCircle(float x,float y) {
+            initDots();
+            this.x = x;
+            this.y = y;
+        }
+        private Dot getDot(int index) {
+            int i =0 ;
+            for(Dot dot:dots) {
+                if(i == index) {
+                    return dot;
+                }
+                i++;
+            }
+            return null;
+        }
+        public void initDots() {
+            int n = 36;
+            for(int i=0;i<36;i++) {
+                dots.add(new Dot(i*gap,dotCircleRadius));
+            }
+            Dot firstDot = getDot(0);
+            if(firstDot!=null) {
+                firstDot.startMoving();
+            }
+        }
+        public void draw(Canvas canvas,Paint paint) {
+            canvas.save();
+            canvas.translate(x,y);
+            for(Dot dot:dots) {
+                dot.draw(canvas,paint);
+            }
+            canvas.restore();
+        }
+        public void update() {
+            int index = 0;
+            for(Dot dot:dots) {
+                dot.update();
+                if(dot.neighborShouldMove) {
+                    Dot nextDot = getDot(index+1);
+                    if(nextDot!=null) {
+                        nextDot.startMoving();
+                    }
+                }
+                index++;
+            }
+        }
+        public int hashCode() {
+            return dots.hashCode()+index;
+        }
+
     }
     private class Dot {
         private float dir = 0,r,deg,initR;
@@ -32,20 +92,25 @@ public class DrawDotCircleVideoView extends ShapedVideoView{
             canvas.drawCircle(x,y,dot_radius,paint);
         }
         public void update() {
-            r+=rSpeed*dir;
-            if(r>=initR+rSpeed*6)  {
-                dir=-1;
-                neighborShouldMove = true;
-            }
-            if(r<=initR) {
-                dir = 0;
-                r = initR;
+            if(dir !=0) {
+                r += rSpeed * dir;
+                if (r >= initR + rSpeed * 6) {
+                    dir = -1;
+                    neighborShouldMove = true;
+                }
+                if (r <= initR) {
+                    dir = 0;
+                    r = initR;
+                }
             }
         }
         public void startMoving() {
             if(dir == 0) {
                 dir = 1;
             }
+        }
+        public int hashCode() {
+            return (int)(deg+r);
         }
     }
 }
