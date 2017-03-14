@@ -79,11 +79,12 @@ public class DrawLineVideoView extends ShapedVideoView {
             theta = (endX == startX)?90:(float)Math.atan((Math.abs(endY-startY))/(Math.abs(endX-startX)));
             float xDir = endX-startX == 0?0:(endX-startX)/Math.abs(endX-startX);
             float yDir = endY-startY == 0?0:(endY-startY)/Math.abs(endY-startY);
-            if(xDir == yDir) {
-                theta += (Math.PI/2)*(1-xDir);
-            }
-            else if(xDir!=yDir) {
-                theta += (Math.PI/2)*(-yDir+2);
+            if(xDir !=0 && yDir!=0) {
+                if (xDir == yDir) {
+                    theta += (Math.PI / 2) * (1 - xDir);
+                } else if (xDir != yDir) {
+                    theta += (Math.PI / 2) * (-yDir + 2);
+                }
             }
             float distance = (float)getDistance(endX,endY),x = 2*linePointRadius;
             while(x<distance) {
