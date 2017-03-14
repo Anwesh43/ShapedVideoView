@@ -4,9 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 
@@ -14,6 +11,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Created by anweshmishra on 14/03/17.
  */
 public class DrawDotCircleVideoView extends ShapedVideoView{
+    private ConcurrentLinkedQueue<DotCircle> dotCircles = new ConcurrentLinkedQueue<>();
     private final float dot_radius = 10,rSpeed = 15,gap = 10,dotCircleRadius=100;
     public DrawDotCircleVideoView(Context context, AttributeSet attrs) {
         super(context,attrs);
@@ -23,6 +21,22 @@ public class DrawDotCircleVideoView extends ShapedVideoView{
     }
     protected boolean shouldDraw() {
         return true;
+    }
+    public void drawElements(Canvas canvas,Paint paint) {
+        for(DotCircle dotCircle:dotCircles) {
+            dotCircle.draw(canvas,paint);
+            dotCircle.update();
+        }
+        try {
+            Thread.sleep(50);
+            invalidate();
+        }
+        catch (Exception ex) {
+
+        }
+    }
+    public void handleTap(float x,float y) {
+        dotCircles.add(new DotCircle(x,y));
     }
     private class DotCircle {
         private int index = 0;
