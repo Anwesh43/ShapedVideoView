@@ -2,6 +2,7 @@ package com.anwesome.ui.shapedvideo;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -23,6 +24,8 @@ public class DrawDotCircleVideoView extends ShapedVideoView{
         return true;
     }
     public void drawElements(Canvas canvas,Paint paint) {
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.parseColor("#99f44336"));
         for(DotCircle dotCircle:dotCircles) {
             dotCircle.draw(canvas,paint);
             dotCircle.update();
@@ -59,7 +62,7 @@ public class DrawDotCircleVideoView extends ShapedVideoView{
         }
         public void initDots() {
             int n = 36;
-            for(int i=0;i<36;i++) {
+            for(int i=0;i<n;i++) {
                 dots.add(new Dot(i*gap,dotCircleRadius));
             }
             Dot firstDot = getDot(0);
@@ -84,6 +87,7 @@ public class DrawDotCircleVideoView extends ShapedVideoView{
                     if(nextDot!=null) {
                         nextDot.startMoving();
                     }
+                    dot.neighborShouldMove = false;
                 }
                 index++;
             }
