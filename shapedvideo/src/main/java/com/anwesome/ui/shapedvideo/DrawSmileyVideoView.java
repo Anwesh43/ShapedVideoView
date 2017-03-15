@@ -2,8 +2,10 @@ package com.anwesome.ui.shapedvideo;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.util.AttributeSet;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -12,9 +14,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class DrawSmileyVideoView extends ShapedVideoView{
     private int w,h,time = 0;
+    private int res[] = {R.drawable.sml1,R.drawable.sml2,R.drawable.sml3};
     private ConcurrentLinkedQueue<Smiley> smileys = new ConcurrentLinkedQueue<>();
     public DrawSmileyVideoView(Context context) {
         super(context);
+    }
+    public DrawSmileyVideoView(Context context, AttributeSet attrs) {
+        super(context,attrs);
     }
     public boolean shouldDraw() {
         return true;
@@ -23,6 +29,10 @@ public class DrawSmileyVideoView extends ShapedVideoView{
         if(time == 0) {
             w = canvas.getWidth();
             h = canvas.getHeight();
+        }
+        for(Smiley smiley:smileys) {
+            smiley.drawSmiley(canvas,paint);
+            smiley.update();
         }
         time++;
         try {
@@ -34,7 +44,7 @@ public class DrawSmileyVideoView extends ShapedVideoView{
         }
     }
     public void handleTap(float x,float y) {
-
+        smileys.add(new Smiley(BitmapFactory.decodeResource(getResources(),res[smileys.size()%3]),x,y));
     }
     private class Smiley {
         private Bitmap bitmap;
