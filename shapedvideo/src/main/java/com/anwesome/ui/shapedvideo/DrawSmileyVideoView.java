@@ -15,12 +15,16 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class DrawSmileyVideoView extends ShapedVideoView{
     private int w,h,time = 0;
     private int res[] = {R.drawable.sml1,R.drawable.sml2,R.drawable.sml3};
+    private Bitmap bitmaps[] = new Bitmap[3];
     private ConcurrentLinkedQueue<Smiley> smileys = new ConcurrentLinkedQueue<>();
     public DrawSmileyVideoView(Context context) {
         super(context);
     }
     public DrawSmileyVideoView(Context context, AttributeSet attrs) {
         super(context,attrs);
+        for(int i=0;i<3;i++) {
+            bitmaps[i] = BitmapFactory.decodeResource(getResources(),res[i]);
+        }
     }
     public boolean shouldDraw() {
         return true;
@@ -29,6 +33,9 @@ public class DrawSmileyVideoView extends ShapedVideoView{
         if(time == 0) {
             w = canvas.getWidth();
             h = canvas.getHeight();
+            for(int i=0;i<3;i++) {
+                bitmaps[i] = Bitmap.createScaledBitmap(bitmaps[i],w/10,w/10,true);
+            }
         }
         for(Smiley smiley:smileys) {
             smiley.drawSmiley(canvas,paint);
@@ -44,23 +51,23 @@ public class DrawSmileyVideoView extends ShapedVideoView{
         }
     }
     public void handleTap(float x,float y) {
-        smileys.add(new Smiley(BitmapFactory.decodeResource(getResources(),res[smileys.size()%3]),x,y));
+        smileys.add(new Smiley(smileys.size()%3,x,y));
     }
     private class Smiley {
-        private Bitmap bitmap;
+        private int bitmapIndex;
         private int mode = 0;
         private float x,y,deg=0,scale=0f,dir = 1;
-        private Smiley(Bitmap bitmap,float x,float y) {
-            this.bitmap = bitmap;
+        private Smiley(int bitmapIndex,float x,float y) {
+            this.bitmapIndex = bitmapIndex;
             this.x = x;
             this.y = y;
-            bitmap = Bitmap.createScaledBitmap(bitmap,w/10,w/10,true);
         }
         public void drawSmiley(Canvas canvas,Paint paint) {
             canvas.save();
             canvas.translate(x,y);
             canvas.rotate(deg);
-            canvas.drawBitmap(bitmap,-w/20,-w/20,paint);
+            canvas.scale(scale,scale);
+            canvas.drawBitmap(bitmaps[bitmapIndex],-w/20,-w/20,paint);
             canvas.restore();
         }
         public void update() {
@@ -88,7 +95,7 @@ public class DrawSmileyVideoView extends ShapedVideoView{
             }
         }
         public int hashCode() {
-            return bitmap.hashCode()+(int)(x+y+deg);
+            return bitmapIndex+(int)(x+y+deg);
         }
     }
 }
