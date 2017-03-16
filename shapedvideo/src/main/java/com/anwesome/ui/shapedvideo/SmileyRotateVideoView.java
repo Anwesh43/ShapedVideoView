@@ -61,9 +61,9 @@ public class SmileyRotateVideoView extends ShapedVideoView {
         private void drawEyes(Canvas canvas,Paint paint) {
             int dir[] = {1,-1};
             paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Color.parseColor("#FFC107"));
+            paint.setColor(Color.parseColor("#FFEA00"));
             canvas.save();
-            canvas.translate(0,-radius/2);
+            canvas.translate(0,-radius/3);
             for(int i=0;i<2;i++) {
                 canvas.save();
                 canvas.scale(dir[i],1);
@@ -75,16 +75,18 @@ public class SmileyRotateVideoView extends ShapedVideoView {
         }
         private void drawFace(Canvas canvas,Paint paint) {
             paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Color.parseColor("#FFEA00"));
+            paint.setColor(Color.parseColor("#FFC107"));
             canvas.drawCircle(0,0,radius,paint);
         }
         private void drawSmile(Canvas canvas,Paint paint) {
-            float smileRadius = (radius)/4;
-            paint.setColor(Color.BLACK);
+            float smileRadius = (radius)/2;
+            paint.setColor(Color.parseColor("#212121"));
+            paint.setStrokeWidth(6);
             paint.setStyle(Paint.Style.STROKE);
             canvas.save();
+            canvas.translate(0,smileRadius);
             canvas.rotate(deg);
-            canvas.drawArc(new RectF(-smileRadius,-smileRadius,smileRadius,smileRadius),60,60,false,paint);
+            canvas.drawArc(new RectF(-smileRadius/2,-smileRadius/4,smileRadius/2,smileRadius/4),7.5f,165,false,paint);
             canvas.restore();
         }
         public void update() {
