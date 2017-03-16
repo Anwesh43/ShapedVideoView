@@ -27,6 +27,10 @@ public class SmileyRotateVideoView extends ShapedVideoView {
             w = canvas.getWidth();
             h = canvas.getHeight();
         }
+        for(RotatingSmiley smiley:smileys) {
+            smiley.draw(canvas,paint);
+            smiley.update();
+        }
         time++;
         try {
             Thread.sleep(50);
@@ -37,7 +41,7 @@ public class SmileyRotateVideoView extends ShapedVideoView {
         }
     }
     public void handleTap(float x,float y) {
-
+        smileys.add(new RotatingSmiley(x,y,w/10));
     }
     private class RotatingSmiley {
         private float deg = 0,time = 1,x,y,radius;
