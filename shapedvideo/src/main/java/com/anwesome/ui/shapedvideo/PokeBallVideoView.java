@@ -7,11 +7,15 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 
+import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 /**
  * Created by anweshmishra on 17/03/17.
  */
 public class PokeBallVideoView extends ShapedVideoView {
     private int w,h,time = 0;
+    private ConcurrentLinkedQueue<PokeBall> pokeBalls = new ConcurrentLinkedQueue<>();
     public PokeBallVideoView(Context context) {
         super(context);
     }
@@ -23,6 +27,14 @@ public class PokeBallVideoView extends ShapedVideoView {
             w = canvas.getWidth();
             h = canvas.getHeight();
         }
+        createBalls();
+        for(PokeBall pokeBall:pokeBalls) {
+            pokeBall.draw(canvas,paint);
+            pokeBall.update();
+            if(pokeBall.opened) {
+                pokeBalls.remove(pokeBall);
+            }
+        }
         time++;
         try {
             Thread.sleep(50);
@@ -32,13 +44,21 @@ public class PokeBallVideoView extends ShapedVideoView {
 
         }
     }
+    private void createBalls() {
+        if(time%10 == 5) {
+            Random random = new Random();
+            pokeBalls.add(new PokeBall(random.nextInt(w),random.nextInt(h)));
+        }
+    }
     public void handleTap(float x,float y) {
-
+        for(PokeBall pokeBall:pokeBalls) {
+            pokeBall.handleTap(x,y);
+        }
     }
     private class PokeBall {
         private boolean opened = false;
         private float x,y,deg = 0,r=10,dir = 0;
-        public PokeBall(float x,float y,float r) {
+        public PokeBall(float x,float y) {
             this.x = x;
             this.y = y;
             this.r = w/6;
@@ -64,6 +84,7 @@ public class PokeBallVideoView extends ShapedVideoView {
             paint.setStrokeWidth(7);
             canvas.drawCircle(0,0,r/40,paint);
             paint.setColor(Color.parseColor("#f44336"));
+            paint.setStyle(Paint.Style.FILL);
             canvas.save();
             canvas.translate(-r,0);
             canvas.rotate(deg);
