@@ -48,9 +48,9 @@ public class PokeBallVideoView extends ShapedVideoView {
         }
     }
     private void createBalls() {
-        if(time%10 == 5) {
+        if(time%20 == 5) {
             Random random = new Random();
-            pokeBalls.add(new PokeBall(random.nextInt(w),random.nextInt(h)));
+            pokeBalls.add(new PokeBall(w/6+random.nextInt(w-w/3),w/6+random.nextInt(h-w/3)));
         }
     }
     public void handleTap(float x,float y) {
@@ -68,7 +68,7 @@ public class PokeBallVideoView extends ShapedVideoView {
         }
         public void update() {
             deg-=dir*9;
-            if(deg<=-90) {
+            if(deg<=-54) {
                opened = true;
             }
         }
@@ -82,7 +82,7 @@ public class PokeBallVideoView extends ShapedVideoView {
             canvas.drawCircle(0,0,r/40,paint);
             paint.setColor(Color.parseColor("#263238"));
             paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(10);
+            paint.setStrokeWidth(5);
             canvas.drawCircle(0,0,r/20,paint);
             paint.setStrokeWidth(7);
             canvas.drawCircle(0,0,r/40,paint);
