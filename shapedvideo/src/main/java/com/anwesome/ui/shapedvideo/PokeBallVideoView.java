@@ -22,6 +22,9 @@ public class PokeBallVideoView extends ShapedVideoView {
     public PokeBallVideoView(Context context, AttributeSet attrs) {
         super(context,attrs);
     }
+    protected boolean shouldDraw() {
+        return true;
+    }
     public void drawElements(Canvas canvas, Paint paint) {
         if(time == 0) {
             w = canvas.getWidth();
