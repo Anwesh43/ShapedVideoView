@@ -82,9 +82,9 @@ public class PokeBallVideoView extends ShapedVideoView {
             canvas.drawCircle(0,0,r/40,paint);
             paint.setColor(Color.parseColor("#263238"));
             paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(5);
+            paint.setStrokeWidth(2);
             canvas.drawCircle(0,0,r/20,paint);
-            paint.setStrokeWidth(7);
+            paint.setStrokeWidth(1);
             canvas.drawCircle(0,0,r/40,paint);
             paint.setColor(Color.parseColor("#f44336"));
             paint.setStyle(Paint.Style.FILL);
