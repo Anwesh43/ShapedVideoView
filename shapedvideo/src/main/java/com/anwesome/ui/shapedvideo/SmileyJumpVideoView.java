@@ -4,10 +4,15 @@ import android.content.Context;
 import android.graphics.*;
 import android.util.AttributeSet;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 /**
  * Created by anweshmishra on 18/03/17.
  */
 public class SmileyJumpVideoView extends ShapedVideoView {
+    private int w,h,time;
+    private Bitmap smileyBitmap;
+    private ConcurrentLinkedQueue<JumpingSmiley> jumpingSmileys = new ConcurrentLinkedQueue<>();
     public SmileyJumpVideoView(Context context) {
         super(context);
     }
@@ -15,13 +20,31 @@ public class SmileyJumpVideoView extends ShapedVideoView {
         super(context,attrs);
     }
     public void drawElements(Canvas canvas,Paint paint) {
+        if(time == 0) {
+            w = canvas.getWidth();
+            h = canvas.getHeight();
+            smileyBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.sml1);
+        }
+        for(JumpingSmiley jumpingSmiley:jumpingSmileys) {
+            jumpingSmiley.draw(canvas,paint);
+            jumpingSmiley.update();
+        }
+        time++;
+        try {
+            Thread.sleep(50);
+            invalidate();
+        }
+        catch (Exception ex)  {
 
+        }
     }
     public boolean shouldDraw() {
         return true;
     }
     public void handleTap(float x,float y) {
-
+        if(time>0) {
+            jumpingSmileys.add(new JumpingSmiley(x, y, w / 6,smileyBitmap ));
+        }
     }
 
     private class JumpingSmiley {
