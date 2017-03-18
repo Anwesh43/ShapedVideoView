@@ -23,20 +23,32 @@ public class SmileyJumpVideoView extends ShapedVideoView {
     public void handleTap(float x,float y) {
 
     }
-    private class JumpingSmiley {
 
-    }
-    private class Smiley {
+    private class JumpingSmiley {
         private float x,y,initY,dir=-1;
         private Bitmap bitmap;
-        public Smiley(float x,float y,float size,Bitmap bitmap) {
+        public JumpingSmiley(float x,float y,float size,Bitmap bitmap) {
             this.x = x;
             this.y = y;
             this.initY = y;
-            this.bitmap = Bitmap.createScaledBitmap(bitmap,size,size,true);
+            this.bitmap = Bitmap.createScaledBitmap(bitmap,(int)size,(int)size,true);
         }
         public void draw(Canvas canvas,Paint paint) {
             canvas.save();
+            canvas.translate(x,y);
+            canvas.drawBitmap(bitmap,-bitmap.getWidth()/2,-bitmap.getHeight()/2,paint);
+            paint.setColor(Color.YELLOW);
+            canvas.drawLine(0,initY-y,0,0,paint);
+            canvas.restore();
+        }
+        public void update() {
+            y+=10*dir;
+            if(y<=initY-200) {
+                dir = 1;
+            }
+            if(y>=initY) {
+                dir = -1;
+            }
         }
     }
 }
