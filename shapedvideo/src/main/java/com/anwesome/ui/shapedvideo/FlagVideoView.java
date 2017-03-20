@@ -38,7 +38,10 @@ public class FlagVideoView extends ShapedVideoView {
                 for(int j=0;j<flagsColorHexes[i].length;j++) {
                     colors[i][j] = Color.parseColor("#99"+flagsColorHexes[i][j].replace("#",""));
                 }
-                transparentFlags.add(new TransparentFlag(colors[i]));
+                transparentFlags.add(new TransparentFlag(w*i,0,colors[i]));
+            }
+            if(transparentFlags.size()>0) {
+                currFlag = transparentFlags.get(0);
             }
         }
         paint.setStyle(Paint.Style.FILL);
@@ -52,6 +55,7 @@ public class FlagVideoView extends ShapedVideoView {
                 prevFlag.update();
                 if(currFlag.isStopped()) {
                     isAnimated = false;
+                    prevFlag.x = prevFlag.dir == 1?w:-w;
                 }
             }
             try {
@@ -73,9 +77,9 @@ public class FlagVideoView extends ShapedVideoView {
         private float x,y,dir =0;
         private boolean curr = false,stopped = false;
         private int flagColors[] = new int[3];
-        public TransparentFlag(int flagColors[]) {
-            this.x = w/2;
-            this.y = h/2;
+        public TransparentFlag(float x,float y,int flagColors[]) {
+            this.x = x;
+            this.y = y;
             this.flagColors = flagColors;
         }
         public boolean isStopped() {
@@ -83,10 +87,12 @@ public class FlagVideoView extends ShapedVideoView {
         }
         public void setDir(float dir) {
             this.dir = dir;
+            stopped = false;
+            curr = false;
         }
         public void draw(Canvas canvas, Paint paint) {
             canvas.save();
-            canvas.translate(x,y);
+            canvas.translate(x+w/2,y+h/2);
             for(int i=0;i<flagColors.length;i++) {
                 paint.setColor(flagColors[i]);
                 canvas.save();
@@ -125,9 +131,9 @@ public class FlagVideoView extends ShapedVideoView {
             else if(e1.getX()>e2.getX()) {
                 dir = -1;
             }
-            if(dir !=0 && transparentFlags.size()>0) {
+            if(dir !=0 && transparentFlags.size()>0 && !isAnimated) {
                 currIndex += dir;
-                if (currIndex > transparentFlags.size()) {
+                if (currIndex > transparentFlags.size()-1) {
                     currIndex = 0;
                 }
                 if (currIndex < 0) {
@@ -135,7 +141,7 @@ public class FlagVideoView extends ShapedVideoView {
                 }
                 prevFlag = currFlag;
                 currFlag = transparentFlags.get(currIndex);
-                currFlag.x = dir*w;
+                currFlag.x = -dir*w;
                 currFlag.setDir(dir);
                 prevFlag.setDir(dir);
                 currFlag.setCurrent();
