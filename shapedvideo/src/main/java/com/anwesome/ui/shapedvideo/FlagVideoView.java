@@ -2,6 +2,7 @@ package com.anwesome.ui.shapedvideo;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
@@ -18,6 +19,7 @@ public class FlagVideoView extends ShapedVideoView {
     private List<TransparentFlag> transparentFlags = new ArrayList<>();
     private TransparentFlag prevFlag,currFlag;
     private int currIndex = 0;
+    private String flagsColorHexes[][] = {{"#FF9100","#FFFFFF","#4CAF50"},{"#f44336","#ffffff","#00BCD4"},{"#000000","#f44336","#FFC107"},{"#FFEB3B","#4CAF50","#f44336"}};
     private GestureDetector gestureDetector;
     public FlagVideoView(Context context){
         super(context);
@@ -31,6 +33,13 @@ public class FlagVideoView extends ShapedVideoView {
         if(time == 0) {
             w = canvas.getWidth();
             h = canvas.getHeight();
+            int colors[][] = new int[flagsColorHexes.length][3];
+            for(int i=0;i<flagsColorHexes.length;i++) {
+                for(int j=0;j<flagsColorHexes[i].length;j++) {
+                    colors[i][j] = Color.parseColor("#99"+flagsColorHexes[i][j].replace("#",""));
+                }
+                transparentFlags.add(new TransparentFlag(colors[i]));
+            }
         }
         paint.setStyle(Paint.Style.FILL);
         for(TransparentFlag transparentFlag:transparentFlags) {
@@ -64,9 +73,9 @@ public class FlagVideoView extends ShapedVideoView {
         private float x,y,dir =0;
         private boolean curr = false,stopped = false;
         private int flagColors[] = new int[3];
-        public TransparentFlag(float x,float y,int flagColors[]) {
-            this.x = x;
-            this.y = y;
+        public TransparentFlag(int flagColors[]) {
+            this.x = w/2;
+            this.y = h/2;
             this.flagColors = flagColors;
         }
         public boolean isStopped() {
