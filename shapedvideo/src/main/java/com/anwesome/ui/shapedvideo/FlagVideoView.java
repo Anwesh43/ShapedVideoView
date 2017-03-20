@@ -5,7 +5,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.view.View;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import java.util.*;
 
 /**
  * Created by anweshmishra on 20/03/17.
@@ -13,11 +15,17 @@ import android.view.View;
 public class FlagVideoView extends ShapedVideoView {
     private int w,h,time = 0;
     private boolean isAnimated = false;
+    private List<TransparentFlag> transparentFlags = new ArrayList<>();
+    private TransparentFlag prevFlag,currFlag;
+    private int currIndex = 0;
+    private GestureDetector gestureDetector;
     public FlagVideoView(Context context){
         super(context);
+        gestureDetector = new GestureDetector(context,new FlagGestureListener());
     }
     public FlagVideoView(Context context, AttributeSet attrs) {
         super(context,attrs);
+        gestureDetector = new GestureDetector(context,new FlagGestureListener());
     }
     public void drawElements(Canvas canvas,Paint paint) {
         if(time == 0) {
@@ -35,6 +43,9 @@ public class FlagVideoView extends ShapedVideoView {
 
             }
         }
+    }
+    public boolean onTouchEvent(MotionEvent event) {
+        return gestureDetector.onTouchEvent(event);
     }
     protected boolean shouldDraw() {
         return true;
@@ -74,6 +85,29 @@ public class FlagVideoView extends ShapedVideoView {
         }
         public int hashCode() {
             return (int)(x+y+dir)+flagColors.hashCode();
+        }
+    }
+    private class FlagGestureListener extends GestureDetector.SimpleOnGestureListener{
+        public boolean onDown(MotionEvent event) {
+            return true;
+        }
+        public boolean onSingleTapUp(MotionEvent event) {
+            return true;
+        }
+        public boolean onFling(MotionEvent e1,MotionEvent e2,float velx,float vely) {
+            if(e1.getX()<e2.getX()) {
+                prevFlag = currFlag;
+                currIndex++;
+                if(currIndex > transparentFlags.size()) {
+                    currIndex = 0;
+                }
+            }
+            else if(e1.getX()>e2.getX()) {
+
+            }
+            prevFlag = currFlag;
+            currFlag = transparentFlags.get(currIndex);
+            return true;
         }
     }
 }
