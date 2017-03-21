@@ -107,18 +107,69 @@ public class GridTraverseVideoView extends ShapedVideoView {
         public void draw(Canvas canvas,Paint paint) {
             paint.setStyle(Paint.Style.FILL);
             if(allowed) {
-                paint.setColor(Color.parseColor("#990097A7"));
+                paint.setColor(Color.parseColor("#660097A7"));
             }
             else {
-                paint.setColor(Color.parseColor("#999E9E9E"));
+                paint.setColor(Color.parseColor("#669E9E9E"));
             }
             canvas.drawRoundRect(new RectF(x-w/2,y-w/2,x+w/2,y+w/2),w/6,w/6,paint);
             paint.setStyle(Paint.Style.STROKE);
-            paint.setColor(Color.parseColor("#99424242"));
+            paint.setColor(Color.parseColor("#66424242"));
             canvas.drawRoundRect(new RectF(x-w/2,y-w/2,x+w/2,y+w/2),w/6,w/6,paint);
         }
         public int hashCode() {
             return (int)(2*x*x+y*y);
+        }
+    }
+    private class TraversingSquare {
+        private SquareGrid curr,target;
+        private float xDir = 0,yDir = 0,x,y,w;
+        public TraversingSquare(SquareGrid curr) {
+            this.curr = curr;
+            this.x = this.curr.x;
+            this.y = this.curr.y;
+            this.w = this.curr.w;
+        }
+        public void draw(Canvas canvas,Paint paint) {
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(Color.parseColor("#663F51B5"));
+            canvas.drawRoundRect(new RectF(x-w/2,y-w/2,x+w/2,y+w/2),w/6,w/6,paint);
+        }
+        public void setDirection(float xDir,float yDir) {
+            this.xDir = xDir;
+            this.yDir = yDir;
+            obtainTarget();
+        }
+        public void obtainTarget() {
+            if(xDir+yDir == 1) {
+                if(xDir == 1) {
+                    target = curr.right;
+                }
+                else {
+                    target = curr.down;
+                }
+            }
+            else {
+                if(xDir == -1) {
+                    target = curr.left;
+                }
+                else {
+                    target = curr.up;
+                }
+            }
+            if(target== null ||(target!=null && !target.allowed)) {
+                this.xDir = 0;
+                this.yDir = 0;
+            }
+        }
+        public void move() {
+            x+=w/6*xDir;
+            y+=w/6*yDir;
+            if(target!=null && x>target.x-w/6 && x<target.x+w/6 && y>target.y-w/6 && y<target.y+w/6) {
+                curr = target;
+                obtainTarget();
+
+            }
         }
     }
 }
