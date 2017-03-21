@@ -20,9 +20,11 @@ public class GridTraverseVideoView extends ShapedVideoView {
     private List<SquareGrid> grids = new ArrayList<>();
     private int w,h,time = 0;
     private TraversingSquare traversingSquare;
+    private GestureDetector gestureDetector;
     private boolean isAnimated = false;
     public GridTraverseVideoView(Context context, AttributeSet attrs) {
         super(context,attrs);
+        gestureDetector = new GestureDetector(context,new GridGestureListener());
     }
     public boolean shouldDraw() {
         return true;
@@ -72,10 +74,15 @@ public class GridTraverseVideoView extends ShapedVideoView {
         for(SquareGrid grid:grids) {
             grid.draw(canvas,paint);
         }
+        traversingSquare.draw(canvas,paint);
         time++;
         if(isAnimated) {
             try {
-                Thread.sleep(50);
+                traversingSquare.move();
+                if(traversingSquare.stopped()) {
+                    isAnimated = false;
+                }
+                Thread.sleep(30);
                 invalidate();
             } catch (Exception ex) {
 
@@ -83,7 +90,7 @@ public class GridTraverseVideoView extends ShapedVideoView {
         }
     }
     public boolean onTouchEvent(MotionEvent event) {
-        return true;
+        return gestureDetector.onTouchEvent(event);
     }
     private class SquareGrid {
         private float x,y,w;
@@ -135,7 +142,7 @@ public class GridTraverseVideoView extends ShapedVideoView {
         }
         public void draw(Canvas canvas,Paint paint) {
             paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Color.parseColor("#663F51B5"));
+            paint.setColor(Color.parseColor("#AA3F51B5"));
             canvas.drawRoundRect(new RectF(x-w/2,y-w/2,x+w/2,y+w/2),w/6,w/6,paint);
         }
         public void setDirection(float xDir,float yDir) {
@@ -163,6 +170,10 @@ public class GridTraverseVideoView extends ShapedVideoView {
             if(target== null ||(target!=null && !target.allowed)) {
                 this.xDir = 0;
                 this.yDir = 0;
+                if(curr!=null) {
+                    x = curr.x;
+                    y = curr.y;
+                }
             }
         }
         public boolean stopped() {
@@ -170,10 +181,12 @@ public class GridTraverseVideoView extends ShapedVideoView {
         }
         public void move() {
             if(target!=null) {
-                x += w / 6 * xDir;
-                y += w / 6 * yDir;
-                if (target != null && x > target.x - w / 6 && x < target.x + w / 6 && y > target.y - w / 6 && y < target.y + w / 6) {
+                x += w  * xDir;
+                y += w  * yDir;
+                if (target != null && x > target.x - w / 2 && x < target.x + w / 2 && y > target.y - w / 2 && y < target.y + w / 2) {
                     curr = target;
+                    x = curr.x;
+                    y = curr.y;
                     obtainTarget();
 
                 }
@@ -188,6 +201,19 @@ public class GridTraverseVideoView extends ShapedVideoView {
             return true;
         }
         public boolean onFling(MotionEvent e1,MotionEvent e2,float velx,float vely) {
+            if(!isAnimated) {
+                if (Math.abs(velx) > Math.abs(vely)) {
+                    if( e1.getX()!=e2.getX()) {
+                        traversingSquare.setDirection((e2.getX() - e1.getX()) / Math.abs(e2.getX() - e1.getX()), 0);
+                    }
+                } else {
+                    if(e2.getY()!=e1.getY()) {
+                        traversingSquare.setDirection(0, (e2.getY() - e1.getY()) / Math.abs(e2.getY() - e1.getY()));
+                    }
+                }
+                isAnimated = true;
+                postInvalidate();
+            }
             return true;
         }
     }
