@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.Random;
 public class GridTraverseVideoView extends ShapedVideoView {
     private List<SquareGrid> grids = new ArrayList<>();
     private int w,h,time = 0;
+    private TraversingSquare traversingSquare;
     private boolean isAnimated = false;
     public GridTraverseVideoView(Context context, AttributeSet attrs) {
         super(context,attrs);
@@ -64,6 +66,7 @@ public class GridTraverseVideoView extends ShapedVideoView {
                 }
                 index++;
             }
+            traversingSquare = new TraversingSquare(grids.get(0));
         }
         paint.setStyle(Paint.Style.FILL);
         for(SquareGrid grid:grids) {
@@ -162,14 +165,30 @@ public class GridTraverseVideoView extends ShapedVideoView {
                 this.yDir = 0;
             }
         }
+        public boolean stopped() {
+            return xDir == 0 && yDir == 0;
+        }
         public void move() {
-            x+=w/6*xDir;
-            y+=w/6*yDir;
-            if(target!=null && x>target.x-w/6 && x<target.x+w/6 && y>target.y-w/6 && y<target.y+w/6) {
-                curr = target;
-                obtainTarget();
+            if(target!=null) {
+                x += w / 6 * xDir;
+                y += w / 6 * yDir;
+                if (target != null && x > target.x - w / 6 && x < target.x + w / 6 && y > target.y - w / 6 && y < target.y + w / 6) {
+                    curr = target;
+                    obtainTarget();
 
+                }
             }
+        }
+    }
+    private class GridGestureListener extends GestureDetector.SimpleOnGestureListener {
+        public boolean onDown(MotionEvent event) {
+            return true;
+        }
+        public boolean onSingleTapUp(MotionEvent e1) {
+            return true;
+        }
+        public boolean onFling(MotionEvent e1,MotionEvent e2,float velx,float vely) {
+            return true;
         }
     }
 }
