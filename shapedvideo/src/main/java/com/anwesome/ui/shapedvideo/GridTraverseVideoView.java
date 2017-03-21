@@ -44,7 +44,7 @@ public class GridTraverseVideoView extends ShapedVideoView {
                 grids.add(new SquareGrid(x,y,sizeOfGrid,allowed));
                 x+=sizeOfGrid;
                 if(x>w) {
-                    x = 0;
+                    x = w/(k*2);
                     y+=sizeOfGrid;
                 }
             }
