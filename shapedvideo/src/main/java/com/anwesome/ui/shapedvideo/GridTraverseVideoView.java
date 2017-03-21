@@ -8,15 +8,66 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by anweshmishra on 21/03/17.
  */
 public class GridTraverseVideoView extends ShapedVideoView {
+    private List<SquareGrid> grids = new ArrayList<>();
+    private int w,h,time = 0;
+    private boolean isAnimated = false;
     public GridTraverseVideoView(Context context, AttributeSet attrs) {
         super(context,attrs);
     }
     public void drawElements(Canvas canvas, Paint paint) {
+        if(time == 0) {
+            w = canvas.getWidth();
+            h = canvas.getHeight();
+            int k = 20;
+            float sizeOfGrid = w/k,x = w/(2*k),y=0;
+            while(y<h-sizeOfGrid/2) {
+                boolean allowed = true;
+                if(grids.size()%20 == 13) {
+                    allowed = false;
+                }
+                grids.add(new SquareGrid(x,y,sizeOfGrid,allowed));
+                x+=sizeOfGrid;
+                if(x>w) {
+                    x = 0;
+                    y+=sizeOfGrid;
+                }
+            }
+            int index = 0;
+            for(SquareGrid grid:grids) {
+                if(index-k>=0) {
+                    grid.setUp(grids.get(index-k));
+                }
+                if(index%k>=1) {
+                    grid.setLeft(grids.get(index-1));
+                }
+                if(index%k<=k-1) {
+                    grid.setRight(grids.get(index+1));
+                }
+                if(index+k<=grids.size()-1) {
+                    grid.setDown(grids.get(index+k));
+                }
+                index++;
+            }
+        }
         paint.setStyle(Paint.Style.FILL);
+        for(SquareGrid grid:grids) {
+            grid.draw(canvas,paint);
+        }
+        if(isAnimated) {
+            try {
+                Thread.sleep(50);
+                invalidate();
+            } catch (Exception ex) {
+
+            }
+        }
     }
     public boolean onTouchEvent(MotionEvent event) {
         return true;
