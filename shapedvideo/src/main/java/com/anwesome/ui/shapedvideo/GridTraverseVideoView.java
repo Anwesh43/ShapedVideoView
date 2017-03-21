@@ -36,7 +36,7 @@ public class GridTraverseVideoView extends ShapedVideoView {
             int na = 0;
             int k = 20;
             float sizeOfGrid = w/k,x = w/(2*k),y=w/(2*k);
-            while(y<h-sizeOfGrid/2) {
+            while(y<h-sizeOfGrid) {
                 boolean allowed = true;
                 if(grids.size()%30 == 11 && na<7) {
                     Random random = new Random();
