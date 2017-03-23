@@ -7,12 +7,14 @@ import android.util.AttributeSet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by anweshmishra on 23/03/17.
  */
 public class PinJumpVideoView extends ShapedVideoView {
     private int w,h,time = 0;
+    private ConcurrentLinkedQueue<JumpingPinContainer> jumpingPinContainers = new ConcurrentLinkedQueue<>();
     public PinJumpVideoView(Context context) {
         super(context);
     }
@@ -27,6 +29,13 @@ public class PinJumpVideoView extends ShapedVideoView {
             w = canvas.getWidth();
             h = canvas.getHeight();
         }
+        for(JumpingPinContainer jumpingPinContainer:jumpingPinContainers) {
+            jumpingPinContainer.draw(canvas,paint);
+            jumpingPinContainer.update();
+            if(jumpingPinContainer.isStopped()) {
+                jumpingPinContainers.remove(jumpingPinContainer);
+            }
+        }
         time++;
         try {
             Thread.sleep(50);
@@ -37,7 +46,8 @@ public class PinJumpVideoView extends ShapedVideoView {
         }
     }
     public void handleTap(float x,float y) {
-
+        JumpingPinContainer jumpingPinContainer = new JumpingPinContainer(x,y);
+        jumpingPinContainers.add(jumpingPinContainer);
     }
     private class JumpingPinContainer {
         private List<JumpingPin> jumpingPins = new ArrayList<>();
@@ -75,6 +85,9 @@ public class PinJumpVideoView extends ShapedVideoView {
         }
         public boolean isStopped() {
             return stopped;
+        }
+        public int hashCode() {
+            return (int)(x+y+currIndex)+jumpingPins.hashCode();
         }
     }
     private class JumpingPin {
