@@ -2,6 +2,7 @@ package com.anwesome.ui.shapedvideo;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 
@@ -29,6 +30,8 @@ public class PinJumpVideoView extends ShapedVideoView {
             w = canvas.getWidth();
             h = canvas.getHeight();
         }
+        paint.setColor(Color.parseColor("#99FF6F00"));
+        paint.setStyle(Paint.Style.FILL);
         for(JumpingPinContainer jumpingPinContainer:jumpingPinContainers) {
             jumpingPinContainer.draw(canvas,paint);
             jumpingPinContainer.update();
@@ -38,7 +41,7 @@ public class PinJumpVideoView extends ShapedVideoView {
         }
         time++;
         try {
-            Thread.sleep(50);
+            Thread.sleep(20);
             invalidate();
         }
         catch (Exception ex) {
@@ -63,7 +66,10 @@ public class PinJumpVideoView extends ShapedVideoView {
             int n = 12;
             float gap = 360/n;
             for(int i=0;i<n;i++) {
-                jumpingPins.add(new JumpingPin(x,y,gap));
+                jumpingPins.add(new JumpingPin(x,y,gap*i));
+            }
+            if(jumpingPins.size()>0) {
+                jumpingPins.get(currIndex).startMoving();
             }
         }
         public void draw(Canvas canvas,Paint paint) {
@@ -72,11 +78,15 @@ public class PinJumpVideoView extends ShapedVideoView {
             }
         }
         public void update() {
-            if(jumpingPins.size()<0 && currIndex<jumpingPins.size()) {
+            if(jumpingPins.size()>0 && currIndex<jumpingPins.size()) {
                 JumpingPin currPin = jumpingPins.get(currIndex);
                 currPin.update();
                 if(currPin.stopped()) {
                     stopped = false;
+                    currIndex++;
+                    if(currIndex<jumpingPins.size()) {
+                        jumpingPins.get(currIndex).startMoving();
+                    }
                 }
             }
             else {
@@ -92,11 +102,12 @@ public class PinJumpVideoView extends ShapedVideoView {
     }
     private class JumpingPin {
         private float x,y,radius,dir = 0,deg = 0,initRadius;
-        public JumpingPin(float x,float y,float radius) {
+        public JumpingPin(float x,float y,float deg) {
             this.x = x;
             this.y = y;
-            this.radius = radius;
-            this.initRadius = radius;
+            this.radius = w/12;
+            this.initRadius = this.radius;
+            this.deg = deg;
         }
         public void draw(Canvas canvas,Paint paint) {
             canvas.save();
