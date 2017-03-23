@@ -5,10 +5,14 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by anweshmishra on 23/03/17.
  */
 public class PinJumpVideoView extends ShapedVideoView {
+    private int w,h,time = 0;
     public PinJumpVideoView(Context context) {
         super(context);
     }
@@ -19,10 +23,59 @@ public class PinJumpVideoView extends ShapedVideoView {
         return true;
     }
     public void drawElements(Canvas canvas,Paint paint) {
+        if(time == 0) {
+            w = canvas.getWidth();
+            h = canvas.getHeight();
+        }
+        time++;
+        try {
+            Thread.sleep(50);
+            invalidate();
+        }
+        catch (Exception ex) {
 
+        }
     }
     public void handleTap(float x,float y) {
 
+    }
+    private class JumpingPinContainer {
+        private List<JumpingPin> jumpingPins = new ArrayList<>();
+        private float x,y;
+        public boolean stopped = false;
+        private int currIndex = 0;
+        public JumpingPinContainer(float x,float y) {
+            this.x = x;
+            this.y = y;
+            initJumpingPins();
+        }
+        public void initJumpingPins() {
+            int n = 12;
+            float gap = 360/n;
+            for(int i=0;i<n;i++) {
+                jumpingPins.add(new JumpingPin(x,y,gap));
+            }
+        }
+        public void draw(Canvas canvas,Paint paint) {
+            for(JumpingPin jumpingPin:jumpingPins) {
+                jumpingPin.draw(canvas,paint);
+            }
+        }
+        public void update() {
+            if(jumpingPins.size()<0 && currIndex<jumpingPins.size()) {
+                JumpingPin currPin = jumpingPins.get(currIndex);
+                currPin.update();
+                if(currPin.stopped()) {
+                    stopped = false;
+                }
+            }
+            else {
+                stopped = true;
+            }
+        }
+        public boolean isStopped() {
+            return stopped;
+        }
     }
     private class JumpingPin {
         private float x,y,radius,dir = 0,deg = 0,initRadius;
