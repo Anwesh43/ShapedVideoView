@@ -72,13 +72,13 @@ public class ChargingBarVideoView extends ShapedVideoView {
         }
         public void drawBars(Canvas canvas,Paint paint,float xStart,float yStart) {
             for(int i=0;i<n;i++) {
-                canvas.drawRect(new RectF(xStart,yStart-h/maxN,xStart+w,yStart),paint);
+                canvas.drawRect(new RectF(xStart,yStart-h/maxN,xStart+w,yStart-(h/(maxN*10))),paint);
                 yStart-=h/maxN;
             }
         }
         public void update() {
             n+=dir;
-            if(n == maxN-1 || n == 0) {
+            if(n == maxN || n == 0) {
                 dir = 0;
             }
         }
