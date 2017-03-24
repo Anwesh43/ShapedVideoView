@@ -9,6 +9,9 @@ import android.util.AttributeSet;
  * Created by anweshmishra on 24/03/17.
  */
 public class ChargingBarVideoView extends ShapedVideoView {
+    ChargingBar chargingBar;
+    private int w,h,time = 0;
+    private boolean isAnimated = false;
     public ChargingBarVideoView(Context context) {
         super(context);
     }
@@ -16,13 +19,36 @@ public class ChargingBarVideoView extends ShapedVideoView {
         super(context,attrs);
     }
     public void handleTap(float x,float y) {
-
+        if(!isAnimated) {
+            chargingBar.startMoving();
+            isAnimated = true;
+            postInvalidate();
+        }
     }
     protected boolean shouldDraw() {
         return true;
     }
     public void drawElements(Canvas canvas, Paint paint) {
+        if(time == 0) {
+            w = canvas.getWidth();
+            h = canvas.getHeight();
+            chargingBar = new ChargingBar(w/2,h/2,w/2,h/2);
+        }
+        chargingBar.draw(canvas,paint);
+        time++;
+        if(isAnimated) {
+            chargingBar.update();
+            if(chargingBar.stopped()) {
+                isAnimated = false;
+            }
+            try {
+                Thread.sleep(50);
+                invalidate();
+            }
+            catch (Exception ex) {
 
+            }
+        }
     }
     private class ChargingBar {
         private float x,y,w,h;
@@ -55,6 +81,9 @@ public class ChargingBarVideoView extends ShapedVideoView {
             if(n == maxN-1 || n == 0) {
                 dir = 0;
             }
+        }
+        public boolean stopped() {
+            return dir == 0;
         }
         public void startMoving() {
             dir = n == 0?1:-1;
