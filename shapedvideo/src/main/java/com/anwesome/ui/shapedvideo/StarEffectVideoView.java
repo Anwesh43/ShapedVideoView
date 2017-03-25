@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Created by anweshmishra on 25/03/17.
  */
 public class StarEffectVideoView extends ShapedVideoView {
-    private int w,h,time = 0;
+    private int w,h,time = 0,n=0,bounds[]=new int[2];
     private ConcurrentLinkedQueue<Star> stars = new ConcurrentLinkedQueue<>();
     public StarEffectVideoView(Context context) {
         super(context);
@@ -22,6 +22,8 @@ public class StarEffectVideoView extends ShapedVideoView {
         if(time == 0) {
             w = canvas.getWidth();
             h = canvas.getHeight();
+            bounds[0] = 0;
+            bounds[1] = w/2;
         }
         for(Star star:stars) {
             star.draw(canvas,paint);
@@ -30,9 +32,10 @@ public class StarEffectVideoView extends ShapedVideoView {
                 stars.remove(star);
             }
         }
-        if(time%20 == 0) {
+        if(time%6 == 0) {
             Random random = new Random();
-            stars.add(new Star(random.nextInt(w),0));
+            stars.add(new Star(bounds[n%2]+random.nextInt(w/2),0));
+            n++;
         }
         time++;
         try {
@@ -51,7 +54,7 @@ public class StarEffectVideoView extends ShapedVideoView {
         public Star(float x,float y) {
             this.x = x;
             this.y = y;
-            this.r = w/10;
+            this.r = w/15;
         }
         public void draw(Canvas canvas,Paint paint) {
             canvas.save();
@@ -64,7 +67,7 @@ public class StarEffectVideoView extends ShapedVideoView {
             Path path = new Path();
             float theta = 0;
             paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Color.parseColor("#889E9E9E"));
+            paint.setColor(Color.parseColor("#88FFD54F"));
             path.moveTo(r/2,0);
             for(int i =0;i<6;i++) {
                 PointF pr = getPointInCircle(r,theta+30);
