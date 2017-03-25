@@ -3,12 +3,15 @@ package com.anwesome.ui.shapedvideo;
 import android.content.Context;
 import android.graphics.*;
 import android.util.AttributeSet;
+import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by anweshmishra on 25/03/17.
  */
 public class StarEffectVideoView extends ShapedVideoView {
     private int w,h,time = 0;
+    private ConcurrentLinkedQueue<Star> stars = new ConcurrentLinkedQueue<>();
     public StarEffectVideoView(Context context) {
         super(context);
     }
@@ -19,6 +22,17 @@ public class StarEffectVideoView extends ShapedVideoView {
         if(time == 0) {
             w = canvas.getWidth();
             h = canvas.getHeight();
+        }
+        for(Star star:stars) {
+            star.draw(canvas,paint);
+            star.update();
+            if(star.stopped()) {
+                stars.remove(star);
+            }
+        }
+        if(time%20 == 0) {
+            Random random = new Random();
+            stars.add(new Star(random.nextInt(w),0));
         }
         time++;
         try {
@@ -34,10 +48,9 @@ public class StarEffectVideoView extends ShapedVideoView {
     }
     private class Star {
         private float x,y,deg=0,r;
-        public Star(float x,float y,float deg) {
+        public Star(float x,float y) {
             this.x = x;
             this.y = y;
-            this.deg = deg;
             this.r = w/10;
         }
         public void draw(Canvas canvas,Paint paint) {
