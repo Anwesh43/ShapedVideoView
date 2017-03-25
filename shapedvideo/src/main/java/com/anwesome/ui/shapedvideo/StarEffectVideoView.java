@@ -22,8 +22,8 @@ public class StarEffectVideoView extends ShapedVideoView {
         if(time == 0) {
             w = canvas.getWidth();
             h = canvas.getHeight();
-            bounds[0] = 0;
-            bounds[1] = w/2;
+            bounds[0] = w/15;
+            bounds[1] = w/2-w/15;
         }
         for(Star star:stars) {
             star.draw(canvas,paint);
