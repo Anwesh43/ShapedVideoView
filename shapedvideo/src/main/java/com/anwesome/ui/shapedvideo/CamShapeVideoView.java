@@ -7,11 +7,15 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 
+import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 /**
  * Created by anweshmishra on 27/03/17.
  */
 public class CamShapeVideoView extends ShapedVideoView {
     private int time = 0,w,h;
+    private ConcurrentLinkedQueue<CamShape> camShapes = new ConcurrentLinkedQueue<>();
     public CamShapeVideoView(Context context) {
         super(context);
     }
@@ -23,9 +27,28 @@ public class CamShapeVideoView extends ShapedVideoView {
             w = canvas.getWidth();
             h = canvas.getHeight();
         }
+        for(CamShape camShape:camShapes) {
+            camShape.draw(canvas,paint);
+            camShape.update();
+            if(camShape.stopped) {
+                camShapes.remove(camShape);
+            }
+        }
+        if(time % 20 == 0) {
+            Random random = new Random();
+            camShapes.add(new CamShape(random.nextInt(w),0));
+        }
+        time++;
+        try {
+            Thread.sleep(50);
+            invalidate();
+        }
+        catch (Exception ex) {
+
+        }
     }
     public void handleTap(float x,float y) {
-
+        
     }
     private class CamShape {
         private boolean stopped = false;
@@ -58,6 +81,8 @@ public class CamShapeVideoView extends ShapedVideoView {
                 stopped = true;
             }
         }
-
+        public int hashCode() {
+            return (int)(x+y+deg);
+        }
     }
 }
