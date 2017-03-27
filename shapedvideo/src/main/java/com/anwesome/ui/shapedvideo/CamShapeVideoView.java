@@ -22,6 +22,9 @@ public class CamShapeVideoView extends ShapedVideoView {
     public CamShapeVideoView(Context context, AttributeSet attrs) {
         super(context,attrs);
     }
+    protected boolean shouldDraw() {
+        return true;
+    }
     public void drawElements(Canvas canvas, Paint paint) {
         if(time == 0) {
             w = canvas.getWidth();
@@ -48,7 +51,11 @@ public class CamShapeVideoView extends ShapedVideoView {
         }
     }
     public void handleTap(float x,float y) {
-        
+        for(CamShape camShape:camShapes) {
+            if(camShape.handleTap(x,y)) {
+                camShapes.remove(camShape);
+            }
+        }
     }
     private class CamShape {
         private boolean stopped = false;
@@ -56,7 +63,7 @@ public class CamShapeVideoView extends ShapedVideoView {
         public CamShape(float x,float y) {
             this.x = x;
             this.y = y;
-            this.size = w/10;
+            this.size = w/6;
         }
         public void draw(Canvas canvas,Paint paint) {
             canvas.save();
@@ -69,17 +76,21 @@ public class CamShapeVideoView extends ShapedVideoView {
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(Color.parseColor("#99616161"));
             canvas.drawRoundRect(new RectF(-size/2,-size/3,size/2,size/3),size/4,size/6,paint);
-            canvas.drawRoundRect(new RectF(-size/4,-size/2,size/4,size/2),size/16,size/16,paint);
+            canvas.drawRoundRect(new RectF(-size/5,-size/2,size/5,-size/2+size/5),size/10,size/15,paint);
+            paint.setStrokeWidth(size/10);
             paint.setStyle(Paint.Style.STROKE);
             paint.setColor(Color.parseColor("#99263238"));
             canvas.drawCircle(0,0,size/8,paint);
         }
         public void update() {
-            y+=h/12;
-            deg+=20;
+            y+=h/30;
+            deg+=15;
             if(y>=h) {
                 stopped = true;
             }
+        }
+        public boolean handleTap(float x,float y) {
+            return  (x>=this.x-size) && x<=this.x+size && y>=this.y-size && y<=this.y+size;
         }
         public int hashCode() {
             return (int)(x+y+deg);
