@@ -42,7 +42,11 @@ public class HeartDrawnVideoView extends ShapedVideoView {
         }
     }
     public void handleTap(float x,float y) {
-
+        for(Heart heart:hearts) {
+            if(heart.handleTap(x,y)) {
+                heart.startRotatingDown();
+            }
+        }
     }
     private class Heart {
         private HeartState heartState = new HeartState();
@@ -74,6 +78,9 @@ public class HeartDrawnVideoView extends ShapedVideoView {
         }
         public int hashCode() {
             return (int)(x+y);
+        }
+        public boolean handleTap(float x,float y) {
+            return (x>=this.x-1.5f*r && x<=this.x+1.5f*r && y>=this.y-1.5f*r && y<=this.y+1.5f*r);
         }
     }
     private class HeartState {
