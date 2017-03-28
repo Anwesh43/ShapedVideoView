@@ -33,6 +33,7 @@ public class HeartDrawnVideoView extends ShapedVideoView {
 
     }
     private class Heart {
+        private HeartState heartState = new HeartState();
         private float x,y,r;
         public Heart(float x,float y) {
             this.x = x;
@@ -44,7 +45,8 @@ public class HeartDrawnVideoView extends ShapedVideoView {
             paint.setColor(Color.RED);
             canvas.save();
             canvas.translate(x,y);
-            //canvas.rotate(deg);
+            canvas.rotate(heartState.getDeg());
+            canvas.scale(heartState.getScale(),heartState.getScale());
             Path path = new Path();
             path.addArc(new RectF(-r/4,-r/2,r/4,r/2),0,180);
             path.addArc(new RectF(-r/4,-r/8,0,r/8),180,180);
@@ -56,6 +58,21 @@ public class HeartDrawnVideoView extends ShapedVideoView {
         }
         public int hashCode() {
             return (int)(x+y);
+        }
+    }
+    private class HeartState {
+        private float deg=0,scale = 0.8f,scaleDir = 1,dir = 0;
+        public float getDeg() {
+            return deg;
+        }
+        public float getScale() {
+            return scale;
+        }
+        public void setScaleDir(float scaleDir) {
+            this.scaleDir = scaleDir;
+        }
+        public void setDir(float dir) {
+            this.dir = dir;
         }
     }
 }
