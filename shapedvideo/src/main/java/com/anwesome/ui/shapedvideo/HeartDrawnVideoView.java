@@ -71,11 +71,12 @@ public class HeartDrawnVideoView extends ShapedVideoView {
             canvas.rotate(heartState.getDeg());
             canvas.scale(heartState.getScale(),heartState.getScale());
             Path path = new Path();
-            path.moveTo(r/4,0);
-            path.lineTo(0,r/2);
-            path.lineTo(-r/4,0);
-            path.addArc(new RectF(-r/4,-r/8,0,r/8),180,180);
-            path.addArc(new RectF(0,-r/8,r/4,r/8),180,180);
+            addCurvedPath(path,r/4-r/2,0,r/2,0,60);
+            addCurvedPath(path,-r/4+r/2,0,r/2,120,60);
+            float a = 0;
+            for(int i=0;i<2;i++) {
+                path.addArc(new RectF((i-1)*r/4, -r / 8, i*r/4, r / 8), 180+i*a, 180-a);
+            }
             canvas.drawPath(path,paint);
             canvas.restore();
         }
@@ -92,11 +93,17 @@ public class HeartDrawnVideoView extends ShapedVideoView {
             return (int)(x+y);
         }
         public boolean handleTap(float x,float y) {
-            return (x>=this.x-1.5f*r && x<=this.x+1.5f*r && y>=this.y-1.5f*r && y<=this.y+1.5f*r);
+            return (x>=this.x-1.5f*r/2 && x<=this.x+1.5f*r/2 && y>=this.y-1.5f*r/2 && y<=this.y+1.5f*r/2);
+        }
+    }
+    private void addCurvedPath(Path path,float x,float y,float r,float startDeg,float sweep) {
+        for(float deg = startDeg;deg<=startDeg+sweep;deg+=5) {
+            float newX = x+r*(float)Math.cos(deg*Math.PI/180),newY = y+r*(float)Math.sin(deg*Math.PI/180);
+            path.lineTo(newX,newY);
         }
     }
     private class HeartState {
-        private float deg=0,scale = 0.8f,scaleDir = 1,dir = 0;
+        private float deg=0,scale = 1,scaleDir = 0.2f,dir = 0;
         private boolean stop = false;
         public float getDeg() {
             return deg;
@@ -112,16 +119,16 @@ public class HeartDrawnVideoView extends ShapedVideoView {
         }
         public void scaleUpDown() {
             scale+=scaleDir;
-            if(scale>=1.2f) {
-                scaleDir = -1;
+            if(scale>=2) {
+                scaleDir = -0.2f;
             }
-            if(scale<=0.8f) {
-                scaleDir = 1;
+            if(scale<=1f) {
+                scaleDir = 0.2f;
             }
         }
         public void rotateDown() {
-            deg -= (360/scale);
-            scale-=0.1f;
+            deg -= 72;
+            scale-=0.2f;
             if(scale<=0) {
                 stop = true;
             }
