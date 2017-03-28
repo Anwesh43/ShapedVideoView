@@ -4,11 +4,15 @@ import android.content.Context;
 import android.graphics.*;
 import android.util.AttributeSet;
 
+import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 /**
  * Created by anweshmishra on 28/03/17.
  */
 public class HeartDrawnVideoView extends ShapedVideoView {
     private int w,h,time = 0;
+    private ConcurrentLinkedQueue<Heart> hearts = new ConcurrentLinkedQueue<>();
     public HeartDrawnVideoView(Context context) {
         super(context);
     }
@@ -19,6 +23,14 @@ public class HeartDrawnVideoView extends ShapedVideoView {
         if(time == 0) {
             w = canvas.getWidth();
             h = canvas.getHeight();
+        }
+        for(Heart heart:hearts) {
+            heart.draw(canvas,paint);
+            heart.update();
+        }
+        if(time%10 == 0) {
+            Random random = new Random();
+            hearts.add(new Heart(random.nextInt(w),random.nextInt(h)));
         }
         time++;
         try {
@@ -34,6 +46,7 @@ public class HeartDrawnVideoView extends ShapedVideoView {
     }
     private class Heart {
         private HeartState heartState = new HeartState();
+        private HeartAnimationController controller = new HeartAnimationController(heartState);
         private float x,y,r;
         public Heart(float x,float y) {
             this.x = x;
@@ -54,7 +67,10 @@ public class HeartDrawnVideoView extends ShapedVideoView {
             canvas.restore();
         }
         public void update() {
-
+            controller.animate();
+        }
+        public void startRotatingDown() {
+            controller.startRotatingDown();
         }
         public int hashCode() {
             return (int)(x+y);
@@ -86,6 +102,9 @@ public class HeartDrawnVideoView extends ShapedVideoView {
         public void rotateDown() {
             deg -= (360/scale);
             scale-=0.1f;
+        }
+        public int hashCode() {
+            return (int)(deg+scale+scaleDir);
         }
     }
     private class HeartAnimationController {
