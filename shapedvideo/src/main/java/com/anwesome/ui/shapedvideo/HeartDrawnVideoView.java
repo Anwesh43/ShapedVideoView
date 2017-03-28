@@ -74,5 +74,43 @@ public class HeartDrawnVideoView extends ShapedVideoView {
         public void setDir(float dir) {
             this.dir = dir;
         }
+        public void scaleUpDown() {
+            scale+=scaleDir;
+            if(scale>=1.2f) {
+                scaleDir = -1;
+            }
+            if(scale<=0.8f) {
+                scaleDir = 1;
+            }
+        }
+        public void rotateDown() {
+            deg -= (360/scale);
+            scale-=0.1f;
+        }
+    }
+    private class HeartAnimationController {
+        private HeartState heartState;
+        private HeartAnimationState animationState = HeartAnimationState.SCALE_UP_DOWN;
+        public HeartAnimationController(HeartState heartState) {
+            this.heartState = heartState;
+        }
+        public void startRotatingDown() {
+            animationState = HeartAnimationState.ROTATE_DOWN;
+        }
+        public void animate() {
+            switch (animationState) {
+                case SCALE_UP_DOWN:
+                    heartState.scaleUpDown();
+                    break;
+                case ROTATE_DOWN:
+                    heartState.rotateDown();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    private enum HeartAnimationState {
+        ROTATE_DOWN,SCALE_UP_DOWN;
     }
 }
