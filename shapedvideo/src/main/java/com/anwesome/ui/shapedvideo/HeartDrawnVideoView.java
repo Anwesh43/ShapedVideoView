@@ -19,6 +19,9 @@ public class HeartDrawnVideoView extends ShapedVideoView {
     public HeartDrawnVideoView(Context context, AttributeSet attrs) {
         super(context,attrs);
     }
+    protected boolean shouldDraw() {
+        return true;
+    }
     public void drawElements(Canvas canvas,Paint paint) {
         if(time == 0) {
             w = canvas.getWidth();
@@ -27,6 +30,9 @@ public class HeartDrawnVideoView extends ShapedVideoView {
         for(Heart heart:hearts) {
             heart.draw(canvas,paint);
             heart.update();
+            if(heart.stopped()) {
+                hearts.remove(heart);
+            }
         }
         if(time%10 == 0) {
             Random random = new Random();
@@ -65,13 +71,19 @@ public class HeartDrawnVideoView extends ShapedVideoView {
             canvas.rotate(heartState.getDeg());
             canvas.scale(heartState.getScale(),heartState.getScale());
             Path path = new Path();
-            path.addArc(new RectF(-r/4,-r/2,r/4,r/2),0,180);
+            path.moveTo(r/4,0);
+            path.lineTo(0,r/2);
+            path.lineTo(-r/4,0);
             path.addArc(new RectF(-r/4,-r/8,0,r/8),180,180);
-            path.addArc(new RectF(0,r/4,-r/8,r/8),180,180);
+            path.addArc(new RectF(0,-r/8,r/4,r/8),180,180);
+            canvas.drawPath(path,paint);
             canvas.restore();
         }
         public void update() {
             controller.animate();
+        }
+        public boolean stopped() {
+            return heartState.stopped();
         }
         public void startRotatingDown() {
             controller.startRotatingDown();
@@ -85,6 +97,7 @@ public class HeartDrawnVideoView extends ShapedVideoView {
     }
     private class HeartState {
         private float deg=0,scale = 0.8f,scaleDir = 1,dir = 0;
+        private boolean stop = false;
         public float getDeg() {
             return deg;
         }
@@ -109,9 +122,15 @@ public class HeartDrawnVideoView extends ShapedVideoView {
         public void rotateDown() {
             deg -= (360/scale);
             scale-=0.1f;
+            if(scale<=0) {
+                stop = true;
+            }
         }
         public int hashCode() {
             return (int)(deg+scale+scaleDir);
+        }
+        public boolean stopped() {
+            return stop;
         }
     }
     private class HeartAnimationController {
