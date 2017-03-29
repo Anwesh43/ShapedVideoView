@@ -7,10 +7,14 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 /**
  * Created by anweshmishra on 29/03/17.
  */
 public class DrawAvatarVideoView extends ShapedVideoView {
+    private ConcurrentLinkedQueue<Avatar> avatars = new ConcurrentLinkedQueue<>();
+    private int time = 0,w,h;
     public DrawAvatarVideoView(Context context) {
         super(context);
     }
@@ -21,17 +25,28 @@ public class DrawAvatarVideoView extends ShapedVideoView {
         return true;
     }
     public void drawElements(Canvas canvas, Paint paint) {
+        if(time == 0) {
+            w = canvas.getWidth();
+            h = canvas.getHeight();
+        }
         paint.setStyle(Paint.Style.FILL);
+        try {
+            Thread.sleep(50);
+            invalidate();;
+        }
+        catch (Exception ex) {
+
+        }
     }
     public void handleTap(float x,float y) {
 
     }
     private class Avatar {
         private float x,y,size,deg = 0;
-        public Avatar(float x,float y,float size) {
+        public Avatar(float x,float y) {
             this.x = x;
             this.y = y;
-            this.size = size;
+            this.size = w/4;
         }
         public void drawAvatar(Canvas canvas,Paint paint) {
             paint.setColor(Color.parseColor("#99FFFFFF"));
