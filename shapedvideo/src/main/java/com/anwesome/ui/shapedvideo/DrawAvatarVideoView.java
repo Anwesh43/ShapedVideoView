@@ -36,9 +36,10 @@ public class DrawAvatarVideoView extends ShapedVideoView {
             avatar.update();
         }
         if(time%20 == 0) {
-            float x = (w/16)+random.nextInt(w-(w/16)),y = w/16+random.nextInt(w-(w/16));
+            float x = (w/16)+random.nextInt(w-(w/16)),y = w/16+random.nextInt(h-(w/16));
             avatars.add(new Avatar(x,y));
         }
+        time++;
         try {
             Thread.sleep(50);
             invalidate();
@@ -74,15 +75,12 @@ public class DrawAvatarVideoView extends ShapedVideoView {
             deg+=20;
         }
         private void drawFace(Canvas canvas,Paint paint) {
-            canvas.drawCircle(0,-size/4,size/8,paint);
+            canvas.drawCircle(0,-size/4,size/4,paint);
         }
         private void drawShoulderAndNeck(Canvas canvas,Paint paint) {
             Path path = new Path();
             path.moveTo(size/2,size/2);
-            DrawingCurveUtil.drawCircularPath(path,0,size/2,size/2,360,300);
-            float newY = (float)((size/2)*(1-Math.sqrt(3)));
-            DrawingCurveUtil.drawCircularPath(path,0,newY,size/2,60,120);
-            DrawingCurveUtil.drawCircularPath(path,0,size/2,size/2,240,180);
+            DrawingCurveUtil.drawCircularPath(path,0,size/2,size/2,360,180);
             path.lineTo(size/2,size/2);
             canvas.drawPath(path,paint);
         }
