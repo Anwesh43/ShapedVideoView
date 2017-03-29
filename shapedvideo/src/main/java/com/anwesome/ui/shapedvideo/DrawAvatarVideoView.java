@@ -41,14 +41,18 @@ public class DrawAvatarVideoView extends ShapedVideoView {
         }
         try {
             Thread.sleep(50);
-            invalidate();;
+            invalidate();
         }
         catch (Exception ex) {
 
         }
     }
     public void handleTap(float x,float y) {
-
+        for(Avatar avatar:avatars) {
+            if(avatar.handleTap(x,y)) {
+                avatars.remove(avatar);
+            }
+        }
     }
     private class Avatar {
         private float x,y,size,deg = 0;
@@ -85,6 +89,9 @@ public class DrawAvatarVideoView extends ShapedVideoView {
 
         public boolean handleTap(float x,float y) {
             return x>=this.x-size/2 && x<=this.x+size/2 && y>=this.y-size/2 && y<=this.y+size/2;
+        }
+        public int hashCode() {
+            return (int)(x+y+deg);
         }
     }
 }
