@@ -31,6 +31,10 @@ public class DrawAvatarVideoView extends ShapedVideoView {
             h = canvas.getHeight();
         }
         paint.setStyle(Paint.Style.FILL);
+        for(Avatar avatar:avatars) {
+            avatar.drawAvatar(canvas,paint);
+            avatar.update();
+        }
         if(time%20 == 0) {
             float x = (w/16)+random.nextInt(w-(w/16)),y = w/16+random.nextInt(w-(w/16));
             avatars.add(new Avatar(x,y));
@@ -77,8 +81,6 @@ public class DrawAvatarVideoView extends ShapedVideoView {
             DrawingCurveUtil.drawCircularPath(path,0,size/2,size/2,240,180);
             path.lineTo(size/2,size/2);
             canvas.drawPath(path,paint);
-
-
         }
 
         public boolean handleTap(float x,float y) {
