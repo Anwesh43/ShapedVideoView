@@ -6,13 +6,14 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
-
+import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by anweshmishra on 29/03/17.
  */
 public class DrawAvatarVideoView extends ShapedVideoView {
+    private Random random = new Random();
     private ConcurrentLinkedQueue<Avatar> avatars = new ConcurrentLinkedQueue<>();
     private int time = 0,w,h;
     public DrawAvatarVideoView(Context context) {
@@ -30,6 +31,10 @@ public class DrawAvatarVideoView extends ShapedVideoView {
             h = canvas.getHeight();
         }
         paint.setStyle(Paint.Style.FILL);
+        if(time%20 == 0) {
+            float x = (w/16)+random.nextInt(w-(w/16)),y = w/16+random.nextInt(w-(w/16));
+            avatars.add(new Avatar(x,y));
+        }
         try {
             Thread.sleep(50);
             invalidate();;
@@ -46,7 +51,7 @@ public class DrawAvatarVideoView extends ShapedVideoView {
         public Avatar(float x,float y) {
             this.x = x;
             this.y = y;
-            this.size = w/4;
+            this.size = w/8;
         }
         public void drawAvatar(Canvas canvas,Paint paint) {
             paint.setColor(Color.parseColor("#99FFFFFF"));
