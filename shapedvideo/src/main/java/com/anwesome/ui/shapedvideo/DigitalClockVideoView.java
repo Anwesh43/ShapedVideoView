@@ -2,6 +2,7 @@ package com.anwesome.ui.shapedvideo;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 
@@ -16,7 +17,6 @@ import java.util.List;
  */
 public class DigitalClockVideoView extends ShapedVideoView {
     private int time = 0,w,h;
-    private TimePart timePart = new TimePart();
     public DigitalClockVideoView(Context context) {
         super(context);
     }
@@ -38,35 +38,50 @@ public class DigitalClockVideoView extends ShapedVideoView {
     }
     private class DigitalClock {
         private float x,y,w,h;
-        private List<Separator> separators = new ArrayList<>();
-        public DigitalClock() {
+        private TimePart timePart = new TimePart();
+        private Paint paint;
+        private Separator separator = new Separator();
+        public DigitalClock(Paint paint) {
             this.x = w/2;
             this.y = h/2;
             this.w = 4*w/5;
             this.h = h/5;
+            this.paint = paint;
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(Color.parseColor("#FAFAFA"));
+            measureTimePartAndSeparators();
         }
-        public void draw(Canvas canvas,Paint paint) {
-
+        public void measureTimePartAndSeparators() {
+            paint.setTextSize(h);
+            String timeString = getTimeString();
+            if (!(paint.measureText(timeString) < this.w)) {
+                h--;
+                measureTimePartAndSeparators();
+            }
+        }
+        public String getTimeString() {
+            String timeString = timePart.getH()+":"+timePart.getM()+":"+timePart.getS();
+            if(!separator.show()) {
+                timeString.replaceAll(":"," ");
+            }
+            return timeString;
+        }
+        public void draw(Canvas canvas) {
+            String timeString = getTimeString();
+            canvas.drawText(timeString,x-paint.measureText(timeString)/2,y,paint);
         }
         public void update() {
+            timePart.update();
+            separator.update();
         }
     }
     private class Separator {
-        private float x,y,r;
         private int counter = 0;
-        private Separator(float x,float y) {
-            this.x = x;
-            this.y = 0;
-            this.r = w/10;
-        }
         public void update(int counter) {
             counter++;
         }
-        public void draw(Canvas canvas,Paint paint) {
-            if(counter%2 != 0) {
-                canvas.drawCircle(x, -2 * r, r, paint);
-                canvas.drawCircle(x, 2 * r, r, paint);
-            }
+        public boolean show() {
+            return counter%3 != 0;
         }
         public int hashCode() {
             return (int)(x);
