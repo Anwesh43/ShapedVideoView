@@ -6,11 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by anweshmishra on 30/03/17.
@@ -77,14 +73,14 @@ public class DigitalClockVideoView extends ShapedVideoView {
     }
     private class Separator {
         private int counter = 0;
-        public void update(int counter) {
+        public void update() {
             counter++;
         }
         public boolean show() {
             return counter%3 != 0;
         }
         public int hashCode() {
-            return (int)(x);
+            return counter;
         }
     }
     private class TimePart {
