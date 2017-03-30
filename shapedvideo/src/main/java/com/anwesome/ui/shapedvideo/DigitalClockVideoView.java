@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by anweshmishra on 30/03/17.
@@ -34,7 +33,7 @@ public class DigitalClockVideoView extends ShapedVideoView {
         time++;
         try {
             digitalClock.update();
-            Thread.sleep(1000);
+            Thread.sleep(50);
             invalidate();
         }
         catch (Exception ex) {
@@ -45,32 +44,32 @@ public class DigitalClockVideoView extends ShapedVideoView {
 
     }
     private class DigitalClock {
-        private float x,y,w,h;
+        private float x,y,wClock,hClock;
         private TimePart timePart = new TimePart();
         private Paint paint;
         private Separator separator = new Separator();
         public DigitalClock(Paint paint) {
             this.x = w/2;
             this.y = h/2;
-            this.w = 4*w/5;
-            this.h = h/5;
+            this.wClock = 4*w/5;
+            this.hClock = 2*h/11;
             this.paint = paint;
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(Color.parseColor("#FAFAFA"));
             measureTimePartAndSeparators();
         }
         public void measureTimePartAndSeparators() {
-            paint.setTextSize(h);
+            paint.setTextSize(hClock);
             String timeString = getTimeString();
-            if (!(paint.measureText(timeString) < this.w)) {
-                h--;
+            if (!(paint.measureText(timeString) < this.wClock)) {
+                hClock*=0.9F;
                 measureTimePartAndSeparators();
             }
         }
         public String getTimeString() {
             String timeString = timePart.getH()+":"+timePart.getM()+":"+timePart.getS();
             if(!separator.show()) {
-                timeString.replaceAll(":"," ");
+                timeString = timeString.replaceAll(":"," ");
             }
             return timeString;
         }
@@ -89,7 +88,7 @@ public class DigitalClockVideoView extends ShapedVideoView {
             counter++;
         }
         public boolean show() {
-            return counter%3 != 0;
+            return counter%20 >= 0 && counter%20<10;
         }
         public int hashCode() {
             return counter;
@@ -104,9 +103,12 @@ public class DigitalClockVideoView extends ShapedVideoView {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
             int hour = calendar.get(Calendar.HOUR_OF_DAY),min = calendar.get(Calendar.MINUTE),sec = calendar.get(Calendar.SECOND);
-            h = hour<10?h:"0"+h;
-            m = ""+min;
-            s = ""+sec;
+            h = getDoubleDigitString(hour);
+            m = getDoubleDigitString(min);
+            s = getDoubleDigitString(sec);
+        }
+        public String getDoubleDigitString(int num) {
+            return num>=10?""+num:"0"+num;
         }
         public void update() {
             getTime();
