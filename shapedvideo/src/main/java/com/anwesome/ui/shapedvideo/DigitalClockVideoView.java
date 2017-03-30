@@ -7,12 +7,14 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by anweshmishra on 30/03/17.
  */
 public class DigitalClockVideoView extends ShapedVideoView {
     private int time = 0,w,h;
+    private DigitalClock digitalClock;
     public DigitalClockVideoView(Context context) {
         super(context);
     }
@@ -26,8 +28,18 @@ public class DigitalClockVideoView extends ShapedVideoView {
         if(time == 0) {
             w = canvas.getWidth();
             h = canvas.getHeight();
+            digitalClock = new DigitalClock(paint);
         }
+        digitalClock.draw(canvas);
         time++;
+        try {
+            digitalClock.update();
+            Thread.sleep(1000);
+            invalidate();
+        }
+        catch (Exception ex) {
+
+        }
     }
     public void handleTap(float x,float y) {
 
