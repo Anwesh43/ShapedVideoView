@@ -5,7 +5,10 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -13,6 +16,7 @@ import java.util.List;
  */
 public class DigitalClockVideoView extends ShapedVideoView {
     private int time = 0,w,h;
+    private TimePart timePart = new TimePart();
     public DigitalClockVideoView(Context context) {
         super(context);
     }
@@ -66,6 +70,35 @@ public class DigitalClockVideoView extends ShapedVideoView {
         }
         public int hashCode() {
             return (int)(x);
+        }
+    }
+    private class TimePart {
+        private String h,m,s;
+        public TimePart() {
+            getTime();
+        }
+        public void getTime() {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            int hour = calendar.get(Calendar.HOUR_OF_DAY),min = calendar.get(Calendar.MINUTE),sec = calendar.get(Calendar.SECOND);
+            h = hour<10?h:"0"+h;
+            m = ""+min;
+            s = ""+sec;
+        }
+        public void update() {
+            getTime();
+        }
+        public String getH() {
+            return h;
+        }
+        public String getM() {
+            return m;
+        }
+        public String getS() {
+            return s;
+        }
+        public int hashCode() {
+            return h.hashCode()+m.hashCode()+s.hashCode();
         }
     }
 }
