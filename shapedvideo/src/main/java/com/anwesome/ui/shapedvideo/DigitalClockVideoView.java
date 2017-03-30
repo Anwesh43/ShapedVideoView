@@ -24,4 +24,20 @@ public class DigitalClockVideoView extends ShapedVideoView {
     public void handleTap(float x,float y) {
 
     }
+    private class DigitalClock {
+        private float x,y,w,h;
+        private int counter = 0;
+        public DigitalClock(float x,float y,float w,float h) {
+            this.x = x;
+            this.y = y;
+            this.w = w;
+            this.h = h;
+        }
+        public void draw(Canvas canvas,Paint paint) {
+
+        }
+        public void update() {
+            counter++;
+        }
+    }
 }
