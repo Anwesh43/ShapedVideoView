@@ -5,12 +5,15 @@ import android.graphics.*;
 import android.util.AttributeSet;
 
 import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by anweshmishra on 31/03/17.
  */
 public class LineGraphVideoView extends ShapedVideoView {
     private int time = 0,w,h;
+    private Random random = new Random();
+    private ConcurrentLinkedQueue<LineGraph> lineGraphs = new ConcurrentLinkedQueue<>();
     public LineGraphVideoView(Context context) {
         super(context);
     }
@@ -25,16 +28,38 @@ public class LineGraphVideoView extends ShapedVideoView {
             w = canvas.getWidth();
             h = canvas.getHeight();
         }
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.parseColor("#99FF5722"));
+        for(LineGraph lineGraph:lineGraphs) {
+            lineGraph.draw(canvas,paint);
+            lineGraph.update();
+            if(lineGraph.isStop()) {
+                lineGraphs.remove(lineGraph);
+            }
+        }
+        if(time%20 == 0) {
+            float x  = w/10+random.nextInt(w-w/10),y = w/10+random.nextInt(h-w/10);
+            int n = 3+random.nextInt(4);
+            lineGraphs.add(new LineGraph(x,y,n));
+        }
         time++;
+        try {
+            Thread.sleep(50);
+            invalidate();
+        }
+        catch (Exception ex) {
+
+        }
     }
     public void handleTap(float x,float y) {
-
+        for(LineGraph lineGraph:lineGraphs) {
+            lineGraph.handleTap(x,y);
+        }
     }
     private class LineGraph {
         private float x,y,wSize,hSize,gap,r,deg = 0,dir = 1;
         private  boolean stop = false;
         private int n;
-        private Random random = new Random();
         public LineGraph(float x,float y,int n) {
             this.x = x;
             this.y = y;
@@ -70,7 +95,7 @@ public class LineGraphVideoView extends ShapedVideoView {
         public void handleTap(float x,float y) {
             boolean condition = dir == 0 && !stop && x>=this.x-wSize/2 && x<=this.x+wSize/2 && y<=this.y && y>=this.y-hSize;
             if(condition) {
-                dir = 1;   
+                dir = 1;
             }
         }
         public int hashCode() {
