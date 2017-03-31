@@ -44,7 +44,7 @@ public class LineGraphVideoView extends ShapedVideoView {
         }
         time++;
         try {
-            Thread.sleep(50);
+            Thread.sleep(100);
             invalidate();
         }
         catch (Exception ex) {
@@ -57,34 +57,36 @@ public class LineGraphVideoView extends ShapedVideoView {
         }
     }
     private class LineGraph {
-        private float x,y,wSize,hSize,gap,r,deg = 0,dir = 1;
+        private float x,y,wSize,hSize,gap,r,deg = 0,dir = 0;
         private  boolean stop = false;
         private int n;
         public LineGraph(float x,float y,int n) {
             this.x = x;
             this.y = y;
             this.n = n;
-            gap = w/40;
+            gap = w/30;
             r = w/60;
-            hSize = h/15;
+            hSize = h/9;
             wSize = gap*(n-1);
         }
         public void draw(Canvas canvas,Paint paint) {
             canvas.save();
             canvas.translate(x,y);
             canvas.rotate(deg);
+            paint.setStrokeWidth(r/8);
             float x1 = -wSize/2,y1 = 0;
+            canvas.drawLine(-wSize/2,0,wSize/2,0,paint);
             for(int i=0;i<n;i++) {
                 float y = random.nextInt((int)hSize);
                 canvas.drawLine(x1,0,x1,-y,paint);
-                canvas.drawCircle(x1,y1-r,r,paint);
+                canvas.drawCircle(x1,-y-r,r,paint);
                 x1+=gap;
             }
             canvas.restore();
         }
         public void update() {
             deg+=dir*20;
-            if(deg%180 == 0) {
+            if(deg == 180) {
                 dir = 0;
                 stop = true;
             }
