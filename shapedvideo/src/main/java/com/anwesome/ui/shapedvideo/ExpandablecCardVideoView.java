@@ -52,10 +52,10 @@ public class ExpandablecCardVideoView extends ShapedVideoView {
         }
         public void draw(Canvas canvas,Paint paint) {
             paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Color.parseColor("#99FAFAFA"));
+            paint.setColor(Color.parseColor("#993F51B5"));
             canvas.drawRect(new RectF(x,y,x+wSize,y+hBar),paint);
             closeButton.draw(canvas,paint);
-            paint.setColor(Color.parseColor("#99e53935"));
+            paint.setColor(Color.parseColor("#9900BCD4"));
             canvas.drawRect(new RectF(x,y+hBar,x+wSize,y+hBar+hMov),paint);
         }
         private void startMoving() {
