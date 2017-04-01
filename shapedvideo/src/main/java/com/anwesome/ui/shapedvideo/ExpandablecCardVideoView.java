@@ -9,6 +9,7 @@ import android.util.AttributeSet;
  */
 public class ExpandablecCardVideoView extends ShapedVideoView {
     private int w,h,time = 0;
+    private ExpandableCard expandableCard;
     public ExpandablecCardVideoView(Context context) {
         super(context);
     }
@@ -16,14 +17,24 @@ public class ExpandablecCardVideoView extends ShapedVideoView {
         super(context,attrs);
     }
     public void handleTap(float x,float y) {
-
+        expandableCard.handleTap(x,y);
     }
     public void drawElements(Canvas canvas, Paint paint) {
         if(time == 0) {
             w = canvas.getWidth();
             h = canvas.getHeight();
+            expandableCard = new ExpandableCard();
         }
+        expandableCard.draw(canvas,paint);
         time++;
+        try {
+            expandableCard.update();
+            Thread.sleep(100);
+            invalidate();
+        }
+        catch (Exception ex) {
+
+        }
     }
     public boolean shouldDraw() {
         return true;
