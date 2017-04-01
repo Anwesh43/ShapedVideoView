@@ -29,26 +29,55 @@ public class ExpandablecCardVideoView extends ShapedVideoView {
         return true;
     }
     private class ExpandableCard {
-        private float x,y;
-        public ExpandableCard(float x,float y) {
-            this.x = x;
-            this.y = y;
+        private float x,y,w,hBar,hMov=0,hFinal,dir = 0;
+        private CloseButton closeButton;
+        public ExpandableCard() {
+            this.x = w/10;
+            this.y = w/3;
+            this.w = w/2;
+            this.hFinal = w/2;
+            this.hBar = h/20;
+            closeButton = new CloseButton(this.w*0.7f,this.hBar/2);
         }
         public void draw(Canvas canvas,Paint paint) {
-
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(Color.parseColor("#99FAFAFA"));
+            canvas.drawRect(new RectF(x,y,x+w,y+hBar),paint);
+            paint.setColor(Color.parseColor("#99e53935"));
+            canvas.drawRect(new RectF(x,y+hBar,x+w,y+hBar+hMov),paint);
+        }
+        private void startMoving() {
+            dir = hMov>=hFinal?1:-1;
         }
         public void handleTap(float x,float y) {
-
+            if(dir==0 && closeButton.handleTap(x,y)) {
+                startMoving();
+            }
+        }
+        public void update() {
+            hMov+=(hFinal/10)*dir;
+            if(closeButton!=null) {
+                closeButton.update(dir);
+            }
+            if(hMov>=hFinal) {
+                dir = 0;
+                hMov = hFinal;
+            }
+            if(hMov<=0) {
+                dir = 0;
+                hMov = 0;
+            }
         }
     }
     private class CloseButton {
-        private float x,y,r,deg = 0,dir = 0;
+        private float x,y,r,deg = 0;
         public CloseButton(float x,float y) {
             this.x = x;
             this.y = y;
             this.r = w/20;
         }
         public void draw(Canvas canvas,Paint paint) {
+            paint.setColor(Color.BLACK);
             canvas.save();
             canvas.translate(x,y);
             canvas.rotate(deg);
@@ -56,18 +85,17 @@ public class ExpandablecCardVideoView extends ShapedVideoView {
                 canvas.save();
                 canvas.rotate(i*90);
                 canvas.drawLine(-r,0,r,0,paint);
-                canvas.restore()
+                canvas.restore();
             }
             canvas.restore();
         }
-        public void update() {
+        public void update(float dir) {
             deg+=9*dir;
-            if(deg >= 90 || deg<=0) {
-                dir = 0;
-            }
         }
-        public void startMoving() {
-            dir = deg == 0?1:-1;
+
+        public boolean handleTap(float x,float y) {
+            boolean condition = x>=this.x-r && x<=this.x+r && y>=this.y-r && y<=this.y+r;
+            return condition;
         }
     }
 }
