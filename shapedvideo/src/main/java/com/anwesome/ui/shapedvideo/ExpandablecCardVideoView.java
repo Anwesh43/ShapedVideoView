@@ -29,7 +29,7 @@ public class ExpandablecCardVideoView extends ShapedVideoView {
         time++;
         try {
             expandableCard.update();
-            Thread.sleep(100);
+            Thread.sleep(30);
             invalidate();
         }
         catch (Exception ex) {
@@ -40,25 +40,26 @@ public class ExpandablecCardVideoView extends ShapedVideoView {
         return true;
     }
     private class ExpandableCard {
-        private float x,y,w,hBar,hMov=0,hFinal,dir = 0;
+        private float x,y,wSize,hBar,hMov=0,hFinal,dir = 0;
         private CloseButton closeButton;
         public ExpandableCard() {
             this.x = w/10;
             this.y = w/3;
-            this.w = w/2;
+            this.wSize = w/2;
             this.hFinal = w/2;
             this.hBar = h/20;
-            closeButton = new CloseButton(this.w*0.7f,this.hBar/2);
+            closeButton = new CloseButton(this.x+this.wSize*0.85f,this.y+this.hBar/2);
         }
         public void draw(Canvas canvas,Paint paint) {
             paint.setStyle(Paint.Style.FILL);
             paint.setColor(Color.parseColor("#99FAFAFA"));
-            canvas.drawRect(new RectF(x,y,x+w,y+hBar),paint);
+            canvas.drawRect(new RectF(x,y,x+wSize,y+hBar),paint);
+            closeButton.draw(canvas,paint);
             paint.setColor(Color.parseColor("#99e53935"));
-            canvas.drawRect(new RectF(x,y+hBar,x+w,y+hBar+hMov),paint);
+            canvas.drawRect(new RectF(x,y+hBar,x+wSize,y+hBar+hMov),paint);
         }
         private void startMoving() {
-            dir = hMov>=hFinal?1:-1;
+            dir = hMov == 0?1:-1;
         }
         public void handleTap(float x,float y) {
             if(dir==0 && closeButton.handleTap(x,y)) {
@@ -85,10 +86,11 @@ public class ExpandablecCardVideoView extends ShapedVideoView {
         public CloseButton(float x,float y) {
             this.x = x;
             this.y = y;
-            this.r = w/20;
+            this.r = w/30;
         }
         public void draw(Canvas canvas,Paint paint) {
             paint.setColor(Color.BLACK);
+            paint.setStrokeWidth(w/100);
             canvas.save();
             canvas.translate(x,y);
             canvas.rotate(deg);
@@ -101,7 +103,7 @@ public class ExpandablecCardVideoView extends ShapedVideoView {
             canvas.restore();
         }
         public void update(float dir) {
-            deg+=9*dir;
+            deg+=4.5f*dir;
         }
 
         public boolean handleTap(float x,float y) {
