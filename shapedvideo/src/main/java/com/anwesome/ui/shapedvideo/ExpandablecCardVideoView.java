@@ -22,4 +22,17 @@ public class ExpandablecCardVideoView extends ShapedVideoView {
     public boolean shouldDraw() {
         return true;
     }
+    private class ExpandableCard {
+        private float x,y;
+        public ExpandableCard(float x,float y) {
+            this.x = x;
+            this.y = y;
+        }
+        public void draw(Canvas canvas,Paint paint) {
+
+        }
+        public void handleTap(float x,float y) {
+
+        }
+    }
 }
