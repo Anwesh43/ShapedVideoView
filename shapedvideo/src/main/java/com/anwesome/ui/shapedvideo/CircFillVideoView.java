@@ -47,6 +47,13 @@ public class CircFillVideoView extends ShapedVideoView{
             currCirc = getCircFillAt(0);
             prevCirc = null;
         }
+        paint.setStyle(Paint.Style.FILL);
+        if(currCirc!=null){
+            currCirc.draw(canvas,paint);
+        }
+        if(prevCirc!=null) {
+            prevCirc.draw(canvas,paint);
+        }
         time++;
         if(isAnimated) {
             if(currCirc!=null) {
@@ -85,6 +92,7 @@ public class CircFillVideoView extends ShapedVideoView{
     public void handleTap(float x,float y) {
         if(!isAnimated && currCirc!=null) {
             isAnimated = true;
+            postInvalidate();
         }
     }
     private class CircFill {
@@ -95,7 +103,7 @@ public class CircFillVideoView extends ShapedVideoView{
             this.color = color;
             x = w/2;
             y = h/2;
-            r = Math.min(w,h)/3;
+            r = Math.min(w,h)/2;
         }
         public void draw(Canvas canvas,Paint paint) {
             paint.setColor(color);
