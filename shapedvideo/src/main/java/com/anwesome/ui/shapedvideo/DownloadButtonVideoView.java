@@ -4,11 +4,16 @@ import android.content.Context;
 import android.graphics.*;
 import android.util.AttributeSet;
 
+import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 /**
  * Created by anweshmishra on 03/04/17.
  */
 public class DownloadButtonVideoView extends ShapedVideoView {
     private int time = 0,w,h;
+    private Random random = new Random();
+    private ConcurrentLinkedQueue<DownloadButton> buttons = new ConcurrentLinkedQueue<>();
     public DownloadButtonVideoView(Context context) {
         super(context);
     }
@@ -23,10 +28,30 @@ public class DownloadButtonVideoView extends ShapedVideoView {
             w = canvas.getWidth();
             h = canvas.getHeight();
         }
+        paint.setStyle(Paint.Style.FILL);
+        for(DownloadButton button:buttons) {
+            button.draw(canvas,paint);
+            button.update();
+            if(button.shouldRemove()) {
+                buttons.remove(button);
+            }
+        }
+        if(time %20 == 0) {
+            buttons.add(new DownloadButton(random.nextInt(w),random.nextInt(w)));
+        }
         time++;
+        try {
+            Thread.sleep(50);
+            invalidate();
+        }
+        catch (Exception ex) {
+
+        }
     }
     public void handleTap(float x,float y) {
-
+        for(DownloadButton button:buttons) {
+            button.handleTap(x,y);
+        }
     }
     private class DownloadButton {
         private int mode = -1;
@@ -45,12 +70,13 @@ public class DownloadButtonVideoView extends ShapedVideoView {
             canvas.save();
             canvas.translate(0,k);
             Path path = new Path();
-            path.moveTo(-size/3,-size/3);
+            path.moveTo(-size/6,-size/3);
+            path.lineTo(-size/6,size/3);
             path.lineTo(-size/3,size/3);
-            path.lineTo(-size/2,size/3);
             path.lineTo(0,size/2);
-            path.lineTo(size/2,size/3);
-            path.lineTo(size/2,-size/3);
+            path.lineTo(size/3,size/3);
+            path.lineTo(size/6,size/3);
+            path.lineTo(size/6,-size/3);
             canvas.drawPath(path,paint);
             canvas.restore();
             canvas.restore();
@@ -80,7 +106,7 @@ public class DownloadButtonVideoView extends ShapedVideoView {
             return (int)(x+y+deg);
         }
         public void handleTap(float x,float y) {
-            if(x>=this.x-size/2 && x<=this.x+size/2 && y>=this.y-size/2 && y<=this.y+size/2) {
+            if(mode == -1 && x>=this.x-size/2 && x<=this.x+size/2 && y>=this.y-size/2 && y<=this.y+size/2) {
                 mode = 0;
             }
         }
