@@ -29,7 +29,7 @@ public class DownloadButtonVideoView extends ShapedVideoView {
 
     }
     private class DownloadButton {
-        private int mode = 0;
+        private int mode = -1;
         private float x,y,deg = -180,k = 0,size;
         public DownloadButton(float x,float y) {
             this.x = x;
@@ -65,13 +65,24 @@ public class DownloadButtonVideoView extends ShapedVideoView {
                     break;
                 case 1:
                     k+=20;
+                    if(k>=h-y) {
+                        mode = 2;
+                    }
                     break;
                 default:
                     break;
             }
         }
+        public boolean shouldRemove() {
+            return mode == 2;
+        }
         public int hashCode() {
             return (int)(x+y+deg);
+        }
+        public void handleTap(float x,float y) {
+            if(x>=this.x-size/2 && x<=this.x+size/2 && y>=this.y-size/2 && y<=this.y+size/2) {
+                mode = 0;
+            }
         }
     }
 }
