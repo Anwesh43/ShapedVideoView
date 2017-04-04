@@ -2,14 +2,19 @@ package com.anwesome.ui.shapedvideo;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by anweshmishra on 04/04/17.
  */
 public class CircMoveVideoView extends ShapedVideoView {
     private int w,h,time = 0;
+    private CircMove currentCirc;
+    private ConcurrentLinkedQueue<CircMove> circMoves = new ConcurrentLinkedQueue<>();
     public CircMoveVideoView(Context context) {
         super(context);
     }
@@ -20,16 +25,44 @@ public class CircMoveVideoView extends ShapedVideoView {
         if(time == 0) {
             w = canvas.getWidth();
             h = canvas.getHeight();
+            CircMove circMove = new CircMove(w/2,h/2);
+            circMoves.add(circMove);
+            currentCirc = circMove;
+        }
+        paint.setColor(Color.parseColor("#99FF5722"));
+        paint.setStyle(Paint.Style.FILL);
+        for(CircMove circMove:circMoves) {
+            circMove.draw(canvas,paint);
+            circMove.update();
+            if(circMove.stop()) {
+                currentCirc = circMove;
+            }
+        }
+        try {
+            Thread.sleep(50);
+            invalidate();
+        }
+        catch(Exception ex) {
+
         }
     }
     public boolean shouldDraw() {
         return true;
     }
     public void handleTap(float x,float y) {
-
+        if(currentCirc!=null && currentCirc.stop()) {
+            CircMove circMove = new CircMove(currentCirc.getX(),currentCirc.getY());
+            circMove.setSpeed(x,y);
+        }
     }
     private class CircMove {
         private float x,y,k=0,xSpeed = 0,ySpeed = 0;
+        public float getX() {
+            return x;
+        }
+        public float getY() {
+            return y;
+        }
         public CircMove(float x,float y) {
             this.x = x;
             this.y = y;
