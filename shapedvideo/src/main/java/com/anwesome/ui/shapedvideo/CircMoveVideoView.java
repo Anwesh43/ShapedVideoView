@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * Created by anweshmishra on 04/04/17.
  */
 public class CircMoveVideoView extends ShapedVideoView {
-    private int w,h,time = 0;
+    private int w,h,time = 0,SPEED_CONTROLLER = 5;
     private CircMove currentCirc;
     private ConcurrentLinkedQueue<CircMove> circMoves = new ConcurrentLinkedQueue<>();
     public CircMoveVideoView(Context context) {
@@ -38,6 +38,7 @@ public class CircMoveVideoView extends ShapedVideoView {
                 currentCirc = circMove;
             }
         }
+        time++;
         try {
             Thread.sleep(50);
             invalidate();
@@ -53,6 +54,7 @@ public class CircMoveVideoView extends ShapedVideoView {
         if(currentCirc!=null && currentCirc.stop()) {
             CircMove circMove = new CircMove(currentCirc.getX(),currentCirc.getY());
             circMove.setSpeed(x,y);
+            circMoves.add(circMove);
         }
     }
     private class CircMove {
@@ -68,8 +70,8 @@ public class CircMoveVideoView extends ShapedVideoView {
             this.y = y;
         }
         public void setSpeed(float x,float y) {
-            this.xSpeed = (this.x - x)/10;
-            this.ySpeed = (this.y - y)/10;
+            this.xSpeed = (x - this.x)/SPEED_CONTROLLER;
+            this.ySpeed = (y-this.y)/SPEED_CONTROLLER;
         }
         public void draw(Canvas canvas,Paint paint) {
             canvas.drawCircle(x,y,w/10,paint);
@@ -78,7 +80,7 @@ public class CircMoveVideoView extends ShapedVideoView {
             x+=xSpeed;
             y+=ySpeed;
             k++;
-            if(k == 10) {
+            if(k == SPEED_CONTROLLER) {
                 xSpeed = 0;
                 ySpeed = 0;
             }
