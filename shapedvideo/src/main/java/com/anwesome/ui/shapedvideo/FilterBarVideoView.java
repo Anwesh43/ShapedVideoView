@@ -30,33 +30,39 @@ public class FilterBarVideoView extends ShapedVideoView {
     }
     private class FilterBar {
         private float x,y,dir = 0,hSize = 0;
-        public FilterBar(float x,float y) {
-            this.x = x;
-            this.y = y;
+        private ArrowBtn arrowBtn;
+        public FilterBar() {
+            this.x = 0;
             this.hSize = h/10;
+            this.y = h-hSize;
+            arrowBtn = new ArrowBtn(w/10,h/20);
         }
         public void draw(Canvas canvas,Paint paint) {
             paint.setColor(Color.parseColor("#AA4DD0E1"));
             canvas.save();
             canvas.translate(x,y);
             canvas.drawRect(new RectF(0,0,w,hSize),paint);
+            arrowBtn.draw(canvas,paint);
             canvas.restore();
         }
         public void update() {
             hSize+=(h/10)*dir;
-            if(hSize<=h/10 || hSize>=h) {
+            y-=(h/10)*dir;
+            arrowBtn.update();
+            if((hSize<=h/10 || hSize>=h)) {
                 dir = 0;
             }
-            if(hSize>=h) {
-                dir = 0;
-            }
+        }
+        public boolean stop() {
+            return arrowBtn.stop() && dir == 0;
         }
         public int hashCode() {
             return (int)(x+y+dir);
         }
         public void handleTap(float x,float y) {
-            if(x>this.x && y>=this.y) {
-
+            if(x>this.x && y>=this.y && arrowBtn.handleTap(x-this.x,y-this.y)) {
+                dir = (hSize<=h/10)?1:-1;
+                arrowBtn.startMoving(dir);
             }
         }
     }
@@ -66,7 +72,7 @@ public class FilterBarVideoView extends ShapedVideoView {
             this.x = x;
             this.y = y;
             this.size = w/30;
-            arrowBtn = new ArrowBtn(x,y);
+
         }
         public void draw(Canvas canvas,Paint paint) {
             canvas.save();
@@ -83,6 +89,9 @@ public class FilterBarVideoView extends ShapedVideoView {
             if(deg>=180 || deg<=0) {
                 dir = 0;
             }
+        }
+        public void startMoving(float dir) {
+            this.dir = dir;
         }
         public boolean stop() {
             return dir == 0;
