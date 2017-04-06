@@ -9,6 +9,8 @@ import android.util.AttributeSet;
  */
 public class FilterBarVideoView extends ShapedVideoView {
     private int time = 0,w,h;
+    private FilterBar filterBar;
+    private boolean isAnimated = false;
     public FilterBarVideoView(Context context) {
         super(context);
     }
@@ -22,11 +24,28 @@ public class FilterBarVideoView extends ShapedVideoView {
         if(time == 0) {
             w = canvas.getWidth();
             h = canvas.getHeight();
+            filterBar = new FilterBar();
         }
+        filterBar.draw(canvas,paint);
         time++;
+        if(isAnimated) {
+            filterBar.update();
+            if(filterBar.stop()) {
+                isAnimated = false;
+            }
+            try {
+                Thread.sleep(50);
+                invalidate();
+            } catch (Exception ex) {
+
+            }
+        }
     }
     public void handleTap(float x,float y) {
-
+        if(filterBar!=null && !isAnimated && filterBar.handleTap(x,y)) {
+            isAnimated = true;
+            postInvalidate();
+        }
     }
     private class FilterBar {
         private float x,y,dir = 0,hSize = 0;
@@ -59,11 +78,13 @@ public class FilterBarVideoView extends ShapedVideoView {
         public int hashCode() {
             return (int)(x+y+dir);
         }
-        public void handleTap(float x,float y) {
+        public boolean handleTap(float x,float y) {
             if(x>this.x && y>=this.y && arrowBtn.handleTap(x-this.x,y-this.y)) {
                 dir = (hSize<=h/10)?1:-1;
                 arrowBtn.startMoving(dir);
+                return true;
             }
+            return false;
         }
     }
     private class ArrowBtn {
