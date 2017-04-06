@@ -1,11 +1,7 @@
 package com.anwesome.ui.shapedvideo;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
+import android.graphics.*;
 import android.util.AttributeSet;
 
 /**
@@ -57,6 +53,42 @@ public class FilterBarVideoView extends ShapedVideoView {
         }
         public int hashCode() {
             return (int)(x+y+dir);
+        }
+        public void handleTap(float x,float y) {
+            if(x>this.x && y>=this.y) {
+
+            }
+        }
+    }
+    private class ArrowBtn {
+        private float x,y,size,deg = 0,dir = 0;
+        public ArrowBtn(float x,float y) {
+            this.x = x;
+            this.y = y;
+            this.size = w/30;
+            arrowBtn = new ArrowBtn(x,y);
+        }
+        public void draw(Canvas canvas,Paint paint) {
+            canvas.save();
+            canvas.translate(x,y);
+            Path path = new Path();
+            path.moveTo(-size,size);
+            path.lineTo(0,0);
+            path.lineTo(size,size);
+            canvas.drawPath(path,paint);
+            canvas.restore();
+        }
+        public void update() {
+            deg+=dir*20;
+            if(deg>=180 || deg<=0) {
+                dir = 0;
+            }
+        }
+        public boolean stop() {
+            return dir == 0;
+        }
+        public boolean handleTap(float x,float y) {
+            return x>=this.x-size && x<=this.x+size && y>=this.y && y<=this.y+size;
         }
     }
 }
