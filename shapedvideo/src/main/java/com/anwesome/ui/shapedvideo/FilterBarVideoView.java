@@ -26,6 +26,7 @@ public class FilterBarVideoView extends ShapedVideoView {
             h = canvas.getHeight();
             filterBar = new FilterBar();
         }
+        paint.setStyle(Paint.Style.FILL);
         filterBar.draw(canvas,paint);
         time++;
         if(isAnimated) {
@@ -52,11 +53,12 @@ public class FilterBarVideoView extends ShapedVideoView {
         private ArrowBtn arrowBtn;
         public FilterBar() {
             this.x = 0;
-            this.hSize = h/10;
+            this.hSize = h/5;
             this.y = h-hSize;
-            arrowBtn = new ArrowBtn(w/10,h/20);
+            arrowBtn = new ArrowBtn(w/5,h/25);
         }
         public void draw(Canvas canvas,Paint paint) {
+            paint.setStyle(Paint.Style.FILL);
             paint.setColor(Color.parseColor("#AA4DD0E1"));
             canvas.save();
             canvas.translate(x,y);
@@ -65,11 +67,19 @@ public class FilterBarVideoView extends ShapedVideoView {
             canvas.restore();
         }
         public void update() {
-            hSize+=(h/10)*dir;
-            y-=(h/10)*dir;
+            hSize+=(h/5)*dir;
+            y-=(h/5)*dir;
             arrowBtn.update();
-            if((hSize<=h/10 || hSize>=h)) {
+            if((hSize<=h/5 || hSize>=h)) {
                 dir = 0;
+                if(hSize>=h) {
+                    hSize = h;
+                    y = 0;
+                }
+                if(hSize<=h/5) {
+                    hSize = h/5;
+                    y = h-hSize;
+                }
             }
         }
         public boolean stop() {
@@ -80,7 +90,7 @@ public class FilterBarVideoView extends ShapedVideoView {
         }
         public boolean handleTap(float x,float y) {
             if(x>this.x && y>=this.y && arrowBtn.handleTap(x-this.x,y-this.y)) {
-                dir = (hSize<=h/10)?1:-1;
+                dir = (hSize<=h/5)?1:-1;
                 arrowBtn.startMoving(dir);
                 return true;
             }
@@ -92,16 +102,19 @@ public class FilterBarVideoView extends ShapedVideoView {
         public ArrowBtn(float x,float y) {
             this.x = x;
             this.y = y;
-            this.size = w/30;
+            this.size = h/20;
 
         }
         public void draw(Canvas canvas,Paint paint) {
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setColor(Color.WHITE);
             canvas.save();
-            canvas.translate(x,y);
+            canvas.translate(x,y+size/2);
+            canvas.rotate(deg);
             Path path = new Path();
-            path.moveTo(-size,size);
-            path.lineTo(0,0);
-            path.lineTo(size,size);
+            path.moveTo(-size,size/2);
+            path.lineTo(0,-size/2);
+            path.lineTo(size,size/2);
             canvas.drawPath(path,paint);
             canvas.restore();
         }
@@ -118,7 +131,7 @@ public class FilterBarVideoView extends ShapedVideoView {
             return dir == 0;
         }
         public boolean handleTap(float x,float y) {
-            return x>=this.x-size && x<=this.x+size && y>=this.y && y<=this.y+size;
+            return x>=this.x-size && x<=this.x+size && y>=this.y-size && y<=this.y+size;
         }
     }
 }
