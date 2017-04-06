@@ -106,6 +106,7 @@ public class FilterBarVideoView extends ShapedVideoView {
 
         }
         public void draw(Canvas canvas,Paint paint) {
+            paint.setStrokeWidth(10);
             paint.setStyle(Paint.Style.STROKE);
             paint.setColor(Color.WHITE);
             canvas.save();
